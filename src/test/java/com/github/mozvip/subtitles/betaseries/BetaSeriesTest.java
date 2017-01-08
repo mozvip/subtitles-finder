@@ -16,7 +16,7 @@ public class BetaSeriesTest {
 	
 	@BeforeClass
 	public static void init() throws Exception {
-		finder = new BetaSeries("TEST_LOGIN", "TEST_PASSWORD");
+		finder = new BetaSeries(System.getenv("BETASERIES_LOGIN"), System.getenv("BETASERIES_PASSWORD"));
 	}
 	
 	@Test

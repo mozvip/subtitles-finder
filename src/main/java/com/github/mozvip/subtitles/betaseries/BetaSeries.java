@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Locale;
+import java.util.Scanner;
+import java.util.regex.MatchResult;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -13,6 +15,8 @@ import com.github.mozvip.subtitles.EpisodeSubtitlesFinder;
 import com.github.mozvip.subtitles.RemoteSubTitles;
 import com.github.mozvip.subtitles.SubTitlesZip;
 import com.github.mozvip.subtitles.SubtitlesFinder;
+
+import okhttp3.Response;
 
 public class BetaSeries extends SubtitlesFinder implements EpisodeSubtitlesFinder {
 
@@ -61,9 +65,25 @@ public class BetaSeries extends SubtitlesFinder implements EpisodeSubtitlesFinde
 
 			Element subTitleLink = listItem.select("span>a").first();
 			String zipFileURL = subTitleLink.attr("abs:href");
+			
+			RemoteSubTitles subtitle;
 
-			RemoteSubTitles subtitle = SubTitlesZip.selectBestSubtitles(getBytes(zipFileURL, element.baseUri()),
-					release, locale);
+			try (Response response = get(zipFileURL, element.baseUri())) {
+			
+				String contentDisposition = response.header("Content-Disposition");
+				String filename;
+				try (Scanner scanner = new Scanner(contentDisposition)) {
+					scanner.findInLine(".*filename=.(.*).");
+					MatchResult result = scanner.match();
+					filename = result.group( 1 );
+				}
+	
+				if (filename.endsWith(".zip")) {
+					subtitle = SubTitlesZip.selectBestSubtitles(response.body().bytes(), release, locale);
+				} else {
+					subtitle = new RemoteSubTitles(response.body().bytes(), 1);
+				}
+			}
 			if (subtitle != null) {
 				if (currentSubs == null || subtitle.getScore() > currentSubs.getScore()) {
 					currentSubs = subtitle;
