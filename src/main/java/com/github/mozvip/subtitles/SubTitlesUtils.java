@@ -13,7 +13,7 @@ public class SubTitlesUtils {
 		nf.setMinimumIntegerDigits(2);
 		
 		List<String> allMatches = new ArrayList<String>();
-		allMatches.add( "" + season + "×" + nf.format( episode ) );
+		allMatches.add( "" + season + "Ã—" + nf.format( episode ) );
 		allMatches.add( "" + season + "x" + nf.format( episode ) );
 		allMatches.add( String.format("S%02dE%02d", season, episode ));
 		allMatches.add( "" +  nf.format( season ) + "x" + nf.format( episode ) );
