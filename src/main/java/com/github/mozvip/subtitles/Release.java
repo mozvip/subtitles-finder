@@ -30,6 +30,7 @@ public enum Release {
 	DiViSiON( new String[] {"DiViSiON"}),
 	CTU( new String[] {"ctu", "720p-CTU", ".ctu.", "-ctu."} ),
 	ECI( new String[] {"ECI"}),
+	FLEET(new String[] {"FLEET"}),
 	GFY(new String[] {"GFY"}),
 	HDxT(new String[] {"HDxT", "hdxt"}),
 	HANNIBAL(new String[] {"hannibal"}),
@@ -63,16 +64,13 @@ public enum Release {
 	RTV( new String[] {"rtv"} ),
 	REWARD(new String[] {"reward"} ),
 	RIVER(new String[] {"river"} ),
+	SVA(new String[] {"SVA"} ),
 	TNS(new String[] {"tns"}),
 	TOPAZ(new String[] {"TOPAZ", "tpz-"} ),
 	ViPER(new String[] {"ViPER"}),
 	YESTV( new String[] {"yestv"} ),
 	YOOX(new String[] {"YOOX"} ),
 	UNKNOWN(null);
-	
-	private final static Logger logger = LoggerFactory
-			.getLogger(Release.class);
-	
 	
 	private String[] aliases;
 	
