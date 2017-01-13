@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.concurrent.Semaphore;
 import java.util.regex.MatchResult;
 
 import org.jsoup.Jsoup;
@@ -25,6 +26,7 @@ import okhttp3.Response;
 public class Addic7ed extends SubtitlesFinder implements EpisodeSubtitlesFinder {
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger( Addic7ed.class );
+	private Semaphore semaphore = new Semaphore(1);	// this is to avoid multiple concurrent invocations
 
 	public Addic7ed() throws IOException {
 		init();
@@ -48,70 +50,82 @@ public class Addic7ed extends SubtitlesFinder implements EpisodeSubtitlesFinder 
 			LOGGER.warn( String.format("Couldn't find show %s", showName) );
 			return null;
 		}
-			
-		String episodeLookupURL = "http://www.addic7ed.com/re_episode.php?ep=" + showId + "-" + season + "x" + episode;
-		Response response = get( episodeLookupURL, null );
 		
-		String episodeUrl = response.request().url().toString();
-		
-		Document document = Jsoup.parse( response.body().string());
-
-		String languageFullName = locale.getDisplayLanguage();
-
-		Elements matchingNodes = document.select( "tr:contains("+ languageFullName + "):contains(Completed):contains(Download)" );
-		
-		int currentScore = -10;
-		String currentURL = null;
-		for ( Element row : matchingNodes ) {
-			List<String> compatibleReleases = new ArrayList<String>();
-			Element parentTable = row.parent().parent();
-			if (parentTable != null) {
-				String text = parentTable.select("td.NewsTitle").text();
-				text = text.trim();
-				
-				try (Scanner scanner = new Scanner( text )) {
-					if (scanner.findInLine(".*Version (.*), .*") != null) {
-						MatchResult result = scanner.match();
-						String releaseText = result.group(1);
-						compatibleReleases.add( releaseText );
-					}
-				}
-			
-				String additionalText = parentTable.select("td.newsDate:contains(Works with)").text();
-				additionalText = additionalText.trim();
-				
-				try (Scanner scanner = new Scanner( additionalText )) {
-					if (scanner.findInLine(".*Works? with (.*)") != null) {
-						MatchResult result = scanner.match();
-						String releaseText = result.group(1);
-						compatibleReleases.add( releaseText );
-					}					
-				}
-
-			}
-
-			String url = "http://www.addic7ed.com" + row.select("a.buttonDownload").first().attr("href");
-			
-			if (!compatibleReleases.isEmpty()) {
-				for (String string : compatibleReleases) {
-					if (string.contains(release)) {
-						currentScore = 20;
-						currentURL = url;
-						break;
-					}
-				}
-			} else {
-				currentScore = 5;
-				currentURL = url;
-			}
+		try {
+			semaphore.acquire();
+		} catch (InterruptedException e) {
+			throw new IOException( e ); 
 		}
-		
-		if (currentURL != null) {
-			Response resp = get( currentURL, episodeUrl );
-			if (resp.code() == 200 && resp.header("Content-Type").contains("text/srt")) {
-				RemoteSubTitles remoteSubTitles = new RemoteSubTitles( resp.body().bytes(), currentScore );
-				return remoteSubTitles;
+
+		try {
+			
+			String episodeLookupURL = "http://www.addic7ed.com/re_episode.php?ep=" + showId + "-" + season + "x" + episode;
+			Response response = get( episodeLookupURL, null );
+			
+			String episodeUrl = response.request().url().toString();
+			
+			Document document = Jsoup.parse( response.body().string());
+	
+			String languageFullName = locale.getDisplayLanguage();
+	
+			Elements matchingNodes = document.select( "tr:contains("+ languageFullName + "):contains(Completed):contains(Download)" );
+			
+			int currentScore = -10;
+			String currentURL = null;
+			for ( Element row : matchingNodes ) {
+				List<String> compatibleReleases = new ArrayList<String>();
+				Element parentTable = row.parent().parent();
+				if (parentTable != null) {
+					String text = parentTable.select("td.NewsTitle").text();
+					text = text.trim();
+					
+					try (Scanner scanner = new Scanner( text )) {
+						if (scanner.findInLine(".*Version (.*), .*") != null) {
+							MatchResult result = scanner.match();
+							String releaseText = result.group(1);
+							compatibleReleases.add( releaseText );
+						}
+					}
+				
+					String additionalText = parentTable.select("td.newsDate:contains(Works with)").text();
+					additionalText = additionalText.trim();
+					
+					try (Scanner scanner = new Scanner( additionalText )) {
+						if (scanner.findInLine(".*Works? with (.*)") != null) {
+							MatchResult result = scanner.match();
+							String releaseText = result.group(1);
+							compatibleReleases.add( releaseText );
+						}					
+					}
+	
+				}
+	
+				String url = "http://www.addic7ed.com" + row.select("a.buttonDownload").first().attr("href");
+				
+				if (!compatibleReleases.isEmpty()) {
+					for (String string : compatibleReleases) {
+						if (string.contains(release)) {
+							currentScore = 20;
+							currentURL = url;
+							break;
+						}
+					}
+				} else {
+					currentScore = 5;
+					currentURL = url;
+				}
 			}
+			
+			if (currentURL != null) {
+				Response resp = get( currentURL, episodeUrl );
+				if (resp.code() == 200 && resp.header("Content-Type").contains("text/srt")) {
+					RemoteSubTitles remoteSubTitles = new RemoteSubTitles( resp.body().bytes(), currentScore );
+					return remoteSubTitles;
+				}
+			}
+			
+		} finally {
+			semaphore.release();
 		}
 		
 		return null;
