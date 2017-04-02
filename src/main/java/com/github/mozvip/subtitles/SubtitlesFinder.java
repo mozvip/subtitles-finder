@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
 import java.util.Scanner;
-import java.util.concurrent.Semaphore;
 import java.util.regex.MatchResult;
 
 import org.jsoup.Jsoup;
@@ -18,8 +17,6 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public abstract class SubtitlesFinder {
-
-	private Semaphore semaphore = new Semaphore(1);
 
 	private OkHttpClient client;
 

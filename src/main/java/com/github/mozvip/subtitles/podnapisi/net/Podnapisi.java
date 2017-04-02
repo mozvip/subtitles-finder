@@ -9,18 +9,29 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import com.github.mozvip.subtitles.EpisodeSubtitlesFinder;
+import com.github.mozvip.subtitles.MovieSubtitlesFinder;
 import com.github.mozvip.subtitles.Release;
 import com.github.mozvip.subtitles.RemoteSubTitles;
 import com.github.mozvip.subtitles.SubTitlesZip;
 import com.github.mozvip.subtitles.SubtitlesFinder;
 
-public class Podnapisi extends SubtitlesFinder implements EpisodeSubtitlesFinder {
+public class Podnapisi extends SubtitlesFinder implements EpisodeSubtitlesFinder, MovieSubtitlesFinder {
 
-	private String buildSearchURL(String name, int season, int episode, Locale locale) {
+	private String buildEpisodeSearchURL(String name, int season, int episode, Locale locale) {
 		name = name.trim().replace(' ', '+');
 		String baseUrl = String.format(
 				"http://www.podnapisi.net/subtitles/search/advanced?keywords=%s&seasons=%d&episodes=%d&language=%s",
 				name, season, episode, locale.getLanguage());
+
+		// TODO: retrieve FPS with mediainfo ? (&fps=25 or &fps=23.976)
+		return baseUrl;
+	}
+
+	private String buildMovieSearchURL(String name, int year, Locale locale) {
+		name = name.trim().replace(' ', '+');
+		String baseUrl = String.format(
+				"http://www.podnapisi.net/subtitles/search/advanced?keywords=%s&year=%d&language=%s", name, year,
+				locale.getLanguage());
 
 		// TODO: retrieve FPS with mediainfo ? (&fps=25 or &fps=23.976)
 		return baseUrl;
@@ -35,7 +46,23 @@ public class Podnapisi extends SubtitlesFinder implements EpisodeSubtitlesFinder
 			queryString = StringUtils.substringBefore(queryString, "(") + StringUtils.substringAfter(queryString, ")");
 		}
 
-		String url = buildSearchURL(queryString, season, episode, locale);
+		String url = buildEpisodeSearchURL(queryString, season, episode, locale);
+		return extractSubtitles(release, locale, url);
+	}
+
+	@Override
+	public RemoteSubTitles downloadMovieSubtitles(String movieName, int year, String release, float fps, Locale locale)
+			throws Exception {
+		String queryString = movieName.toLowerCase();
+		if (StringUtils.contains(queryString, "(")) {
+			queryString = StringUtils.substringBefore(queryString, "(") + StringUtils.substringAfter(queryString, ")");
+		}
+
+		String url = buildMovieSearchURL(queryString, year, locale);
+		return extractSubtitles(release, locale, url);
+	}
+
+	private RemoteSubTitles extractSubtitles(String release, Locale locale, String url) throws IOException {
 		Document document = getDocument(url);
 
 		String href = null;
@@ -55,7 +82,7 @@ public class Podnapisi extends SubtitlesFinder implements EpisodeSubtitlesFinder
 				}
 			}
 		}
-		
+
 		if (href != null) {
 			byte[] bytes = getBytes(href, url);
 			return SubTitlesZip.selectBestSubtitles(bytes, release, locale);
