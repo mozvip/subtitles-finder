@@ -1,6 +1,7 @@
 package com.github.mozvip.subtitles.podnapisi.net;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.Locale;
 
 import org.apache.commons.lang3.StringUtils;
@@ -51,7 +52,7 @@ public class Podnapisi extends SubtitlesFinder implements EpisodeSubtitlesFinder
 	}
 
 	@Override
-	public RemoteSubTitles downloadMovieSubtitles(String movieName, int year, String release, float fps, Locale locale)
+	public RemoteSubTitles downloadMovieSubtitles(String movieName, int year, String release, BigDecimal fps, Locale locale)
 			throws Exception {
 		String queryString = movieName.toLowerCase();
 		if (StringUtils.contains(queryString, "(")) {

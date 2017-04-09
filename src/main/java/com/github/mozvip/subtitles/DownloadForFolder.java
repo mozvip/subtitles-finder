@@ -1,6 +1,7 @@
 package com.github.mozvip.subtitles;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.file.DirectoryStream;
 import java.nio.file.DirectoryStream.Filter;
 import java.nio.file.Files;
@@ -76,7 +77,7 @@ public class DownloadForFolder {
 						String movieName = match.group(1).replaceAll("\\.", " ");
 						int year = Integer.parseInt( match.group(2));
 						String release = match.group(3);
-						float fps = 25.0f;
+						BigDecimal fps = BigDecimal.valueOf( 25.0d );
 						
 						for (Class<? extends MovieSubtitlesFinder> finderClass : movieSubtitlesFinders) {
 							subTitles = finderClass.newInstance().downloadMovieSubtitles(movieName, year, release, fps, locale);
