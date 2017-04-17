@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.MatchResult;
 
 import org.jsoup.Jsoup;
@@ -25,7 +26,10 @@ public abstract class SubtitlesFinder {
 		CookieManager cookieManager = new CookieManager();
 		cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
 		
-		client = new OkHttpClient.Builder().cookieJar(new JavaNetCookieJar(cookieManager)).build();
+		client = new OkHttpClient.Builder()
+				.connectTimeout(30, TimeUnit.SECONDS)
+				.readTimeout(30, TimeUnit.SECONDS)
+				.cookieJar(new JavaNetCookieJar(cookieManager)).build();
 	}
 
 	protected String extractNameFromShowName(String name) {
