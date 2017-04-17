@@ -5,8 +5,6 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public enum Release {
 		
@@ -30,7 +28,9 @@ public enum Release {
 	DiViSiON( new String[] {"DiViSiON"}),
 	CTU( new String[] {"ctu", "720p-CTU", ".ctu.", "-ctu."} ),
 	ECI( new String[] {"ECI"}),
+	ETHD( new String[] {"EtHD"}),
 	FLEET(new String[] {"FLEET"}),
+	FOXM(new String[] {"FOXM"}),
 	GFY(new String[] {"GFY"}),
 	HDxT(new String[] {"HDxT", "hdxt"}),
 	HANNIBAL(new String[] {"hannibal"}),
@@ -39,6 +39,7 @@ public enum Release {
 	KILLERS(new String[] {"KILLERS"}),
 	LOL_DIMENSION( new String[] {"dimension", ".dim.", "-DIMENSION.", "-DIM.", ".DiMENSiON.", ".lol.", "LOL", "SYS"} ),
 	MAGiCDRAGON(new String[] {"MAGiCDRAGON"}),
+	MkvCage(new String[] {"MkvCage"}),
 	NTB(new String[] {"NTb"}),
 	ORENJI( new String[] { "orenji", "ore" }),
 	PiLAF(new String[] {"PiLAF"}),

@@ -69,21 +69,21 @@ public class DownloadForFolder {
 				
 				if (subTitles == null) {
 				
-					Scanner sc = new Scanner(path.getFileName().toString());
-					String token = sc.findInLine("(.*)[\\.\\s-_](19\\d{2}|20\\d{2})[\\.\\s-_](.*)[\\.]\\w+");
-					if ( token != null) {
-						MatchResult match = sc.match();
-						
-						String movieName = match.group(1).replaceAll("\\.", " ");
-						int year = Integer.parseInt( match.group(2));
-						String release = match.group(3);
-						BigDecimal fps = BigDecimal.valueOf( 25.0d );
-						
-						for (Class<? extends MovieSubtitlesFinder> finderClass : movieSubtitlesFinders) {
-							subTitles = finderClass.newInstance().downloadMovieSubtitles(movieName, year, release, fps, locale);
+					try (Scanner sc = new Scanner(path.getFileName().toString())) {
+						String token = sc.findInLine("(.*)[\\.\\s-_](19\\d{2}|20\\d{2})[\\.\\s-_](.*)[\\.]\\w+");
+						if ( token != null) {
+							MatchResult match = sc.match();
+							
+							String movieName = match.group(1).replaceAll("\\.", " ");
+							int year = Integer.parseInt( match.group(2));
+							String release = match.group(3);
+							BigDecimal fps = BigDecimal.valueOf( 25.0d );
+							
+							for (Class<? extends MovieSubtitlesFinder> finderClass : movieSubtitlesFinders) {
+								subTitles = finderClass.newInstance().downloadMovieSubtitles(movieName, year, release, fps, locale);
+							}
 						}
 					}
-					
 				}
 				
 				
