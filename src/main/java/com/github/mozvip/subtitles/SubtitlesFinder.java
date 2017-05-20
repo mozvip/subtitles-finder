@@ -53,8 +53,10 @@ public abstract class SubtitlesFinder {
 	}
 
 	public byte[] getBytes(String url, String refererUrl) throws IOException {
-
 		Response response = get(url, refererUrl);
+		if (response.code() >= 400) {
+			throw new IOException("HTTP request failed");
+		}
 		return response.body().bytes();
 	}
 
@@ -96,7 +98,6 @@ public abstract class SubtitlesFinder {
 	protected Response get(String url, String refererUrl) throws IOException {
 		Request.Builder builder = getRequestBuilder(url, refererUrl);
 		Request request = builder.build();
-
 		Response response = client.newCall(request).execute();
 		return response;
 	}

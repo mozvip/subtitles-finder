@@ -146,14 +146,17 @@ public class SousTitresEU extends SubtitlesFinder implements EpisodeSubtitlesFin
 			Element link = node.parent();
 			String href = link.absUrl("href");
 
-			byte[] bytes = getBytes(href, url);
-			RemoteSubTitles currentRemoteSubTitles = SubTitlesZip.selectBestSubtitles(bytes, release, locale);
-			if (currentRemoteSubTitles != null) {
-				if (bestSubTitles == null || currentRemoteSubTitles.getScore() > bestSubTitles.getScore()) {
-					bestSubTitles = currentRemoteSubTitles;
+			try {
+				byte[] bytes = getBytes(href, url);			
+				RemoteSubTitles currentRemoteSubTitles = SubTitlesZip.selectBestSubtitles(bytes, release, locale);
+				if (currentRemoteSubTitles != null) {
+					if (bestSubTitles == null || currentRemoteSubTitles.getScore() > bestSubTitles.getScore()) {
+						bestSubTitles = currentRemoteSubTitles;
+					}
 				}
+			} catch (IOException e) {
+				LOGGER.error( e.getMessage(), e );
 			}
-
 		}
 
 		return bestSubTitles;
