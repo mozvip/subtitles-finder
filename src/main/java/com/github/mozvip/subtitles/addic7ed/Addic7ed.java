@@ -102,7 +102,7 @@ public class Addic7ed extends SubtitlesFinder implements EpisodeSubtitlesFinder 
 	
 				String url = "http://www.addic7ed.com" + row.select("a.buttonDownload").first().attr("href");
 				
-				if (!compatibleReleases.isEmpty()) {
+				if (release != null && !compatibleReleases.isEmpty()) {
 					for (String string : compatibleReleases) {
 						if (string.contains(release)) {
 							currentScore = 20;
