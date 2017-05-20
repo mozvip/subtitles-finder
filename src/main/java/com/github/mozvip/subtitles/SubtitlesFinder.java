@@ -12,6 +12,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 import okhttp3.FormBody;
+import okhttp3.HttpUrl;
 import okhttp3.JavaNetCookieJar;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -90,6 +91,7 @@ public abstract class SubtitlesFinder {
 		builder.addHeader("User-Agent",
 				"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36");
 		if (refererUrl != null) {
+			refererUrl = HttpUrl.parse( refererUrl ).toString();
 			builder.addHeader("Referer", refererUrl);
 		}
 		return builder;
