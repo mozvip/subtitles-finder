@@ -24,6 +24,11 @@ public class SousTitresEUTest extends AbstractSubtitleFinderTest {
 	}
 
 	@Test
+	public void testLeftovers() throws IOException {
+		finder.downloadEpisodeSubtitle("The Leftovers", 3, 1, "KILLERS", Locale.FRENCH);
+	}
+
+	@Test
 	public void testGot() throws IOException {
 		finder.downloadEpisodeSubtitle("Game of Thrones", 2, 1, "IMMERSE", Locale.FRENCH);
 	}
