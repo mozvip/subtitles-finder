@@ -3,12 +3,12 @@ package com.github.mozvip.subtitles;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.util.Enumeration;
 import java.util.Locale;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipFile;
+import org.apache.commons.compress.utils.SeekableInMemoryByteChannel;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -65,15 +65,17 @@ public class SubTitlesZip {
 		try {
 			IOUtils.write( zipData, new FileOutputStream( tempFile ) );
 	
-			ZipFile zip = new ZipFile( tempFile, Charset.defaultCharset());
+			SeekableInMemoryByteChannel inMemoryByteChannel = new SeekableInMemoryByteChannel(zipData);
+			
+			ZipFile zip = new ZipFile( inMemoryByteChannel );
 
 			try {
-				ZipEntry selectedEntry = null;
+				ZipArchiveEntry selectedEntry = null;
 				int maxScore = -100;
 				
-				Enumeration<?> entries = zip.entries();
+				Enumeration<ZipArchiveEntry> entries = zip.getEntries();
 				while(entries.hasMoreElements()) {
-					ZipEntry entry = (ZipEntry) entries.nextElement();
+					ZipArchiveEntry entry = entries.nextElement();
 					
 					if (entry.isDirectory()) {
 						continue;
