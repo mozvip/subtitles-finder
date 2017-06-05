@@ -1,7 +1,5 @@
 package com.github.mozvip.subtitles;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Locale;
@@ -27,7 +25,7 @@ public class SubTitlesZip {
 		if ((StringUtils.containsIgnoreCase(subtitleName, ".EN.") || StringUtils.containsIgnoreCase(subtitleName, ".EN-") || StringUtils.containsIgnoreCase(subtitleName, ".VO-") || StringUtils.containsIgnoreCase(subtitleName, ".VO.") || StringUtils.containsIgnoreCase(subtitleName, ".VOsync.") ) && !locale.getLanguage().equals("en")) {
 			return -1;
 		}
-		
+
 		int score = 0;
 		// test for release
 		if ( release != null ) {
@@ -40,10 +38,6 @@ public class SubTitlesZip {
 		}
 
 		if (StringUtils.endsWithIgnoreCase(subtitleName, ".srt")) {
-			score += 1;
-		}
-		
-		if (StringUtils.containsIgnoreCase(subtitleName, ".TAG.") && !StringUtils.containsIgnoreCase(subtitleName, ".NOTAG.")) {
 			score += 1;
 		}
 
@@ -61,65 +55,56 @@ public class SubTitlesZip {
 	}
 
 	protected static RemoteSubTitles selectBestSubtitles(byte[] zipData, String release, Locale locale, boolean checkEpisode, int season, int episode) throws IOException {
-		File tempFile = File.createTempFile("dynamo", ".zip");
+		SeekableInMemoryByteChannel inMemoryByteChannel = new SeekableInMemoryByteChannel(zipData);
+		ZipFile zip = new ZipFile( inMemoryByteChannel );
 		try {
-			IOUtils.write( zipData, new FileOutputStream( tempFile ) );
 	
-			SeekableInMemoryByteChannel inMemoryByteChannel = new SeekableInMemoryByteChannel(zipData);
+			ZipArchiveEntry selectedEntry = null;
+			int maxScore = -100;
 			
-			ZipFile zip = new ZipFile( inMemoryByteChannel );
-
-			try {
-				ZipArchiveEntry selectedEntry = null;
-				int maxScore = -100;
+			Enumeration<ZipArchiveEntry> entries = zip.getEntries();
+			while(entries.hasMoreElements()) {
+				ZipArchiveEntry entry = entries.nextElement();
 				
-				Enumeration<ZipArchiveEntry> entries = zip.getEntries();
-				while(entries.hasMoreElements()) {
-					ZipArchiveEntry entry = entries.nextElement();
-					
-					if (entry.isDirectory()) {
-						continue;
-					}
-					
-					if (entry.getName().endsWith(".zip")) {
-						// FIXME: support nested zips
-						continue;
-					}
-					
-					if (checkEpisode && !SubTitlesUtils.isMatch(entry.getName(), season, episode)) {
-						continue;
-					}
-
-					int score = evaluateScore( entry.getName(), locale, release );
-					
-					if (score < 0) {
-						continue;
-					}
-	
-					if (selectedEntry == null || score > maxScore) {
-						selectedEntry = entry;
-					}
-					
-					if (score > maxScore) {
-						maxScore = score;
-					}
+				if (entry.isDirectory()) {
+					continue;
 				}
 				
-				if ( selectedEntry != null ) {
-					
-					LOGGER.info("selecting " + selectedEntry.getName() + " (score=" + maxScore + ")");
-	
-					byte[] data = new byte[ (int) selectedEntry.getSize() ];
-					IOUtils.readFully( zip.getInputStream(selectedEntry) , data );
-					
-					return new RemoteSubTitles( data, maxScore );
+				if (entry.getName().endsWith(".zip")) {
+					// FIXME: support nested zips
+					continue;
+				}
+				
+				if (checkEpisode && !SubTitlesUtils.isMatch(entry.getName(), season, episode)) {
+					continue;
 				}
 	
-			} finally {
-				zip.close();
+				int score = evaluateScore( entry.getName(), locale, release );
+				
+				if (score < 0) {
+					continue;
+				}
+	
+				if (selectedEntry == null || score > maxScore) {
+					selectedEntry = entry;
+				}
+				
+				if (score > maxScore) {
+					maxScore = score;
+				}
+			}
+			
+			if ( selectedEntry != null ) {
+				
+				LOGGER.info("selecting " + selectedEntry.getName() + " (score=" + maxScore + ")");
+	
+				byte[] data = new byte[ (int) selectedEntry.getSize() ];
+				IOUtils.readFully( zip.getInputStream(selectedEntry) , data );
+				
+				return new RemoteSubTitles( data, maxScore );
 			}
 		} finally {
-			tempFile.delete();
+			zip.close();
 		}
 		
 		return null;
