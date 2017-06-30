@@ -50,10 +50,11 @@ public class DownloadForFolder {
 		Reflections reflections = new Reflections("com.github.mozvip.subtitles");
 		Set<Class<? extends FileHashSubtitlesFinder>> fileHashSubtitlesFinders = reflections.getSubTypesOf(FileHashSubtitlesFinder.class);
 		Set<Class<? extends MovieSubtitlesFinder>> movieSubtitlesFinders = reflections.getSubTypesOf(MovieSubtitlesFinder.class);
+		Set<Class<? extends EpisodeSubtitlesFinder>> episodeSubtitlesFinders= reflections.getSubTypesOf(EpisodeSubtitlesFinder.class);
 
 		Locale locale = Locale.FRENCH;
 		
-		List<Path> contents = getContents(Paths.get("h:/"), VideoFileFilter.getInstance(), true);
+		List<Path> contents = getContents(Paths.get("\\\\DLINK-4T\\Volume_1\\series\\Broadchurch\\Season 03"), VideoFileFilter.getInstance(), true);
 		for (Path path : contents) {
 			try {
 				logger.info("Searching for subtitles for {}", path.toAbsolutePath().toString());
@@ -82,6 +83,33 @@ public class DownloadForFolder {
 							for (Class<? extends MovieSubtitlesFinder> finderClass : movieSubtitlesFinders) {
 								subTitles = finderClass.newInstance().downloadMovieSubtitles(movieName, year, release, fps, locale);
 							}
+						} else {
+							
+							// Broadchurch.S03E02.FASTSUB.VOSTFR.720p.HDTV.x264-ARK01.mkv
+							
+							token = sc.findInLine("(.*)[\\.\\s-_]S(\\d{2})E(\\d{2})[\\.\\s-_](.*)[\\.]\\w+");
+							
+							if (token != null) {
+								MatchResult match = sc.match();
+								
+								String showName = match.group(1).replaceAll("\\.", " ");
+								int season = Integer.parseInt( match.group(2));
+								int episode = Integer.parseInt( match.group(3));
+								String release = match.group(4);
+								
+								for (Class<? extends EpisodeSubtitlesFinder> finderClass : episodeSubtitlesFinders) {
+									try {
+										subTitles = finderClass.newInstance().downloadEpisodeSubtitle(showName, season, episode, release, locale);
+										if (subTitles != null) {
+											break;
+										}
+									} catch (Exception e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									}
+								}
+							}
+							
 						}
 					}
 				}

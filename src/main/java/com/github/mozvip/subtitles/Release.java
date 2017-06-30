@@ -52,6 +52,7 @@ public enum Release {
 	CTRLHD( new String[] {"ctrlhd", "CtrlHD", "ctrl"} ),
 	NFHD(new String[] {"NFHD"} ),
 	NESTA(new String[] {"NESTA"} ),
+	ORGANiC(new String[] {"ORGANiC"} ),
 	TLA(new String[] {"tla"} ),
 	SINNERS( new String[] {"sinners"} ),
 	NOTV( new String[] {".notv.", "-notv.", "NoTV"} ),
