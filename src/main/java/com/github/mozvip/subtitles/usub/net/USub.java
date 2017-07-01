@@ -64,7 +64,7 @@ public class USub extends SubtitlesFinder implements EpisodeSubtitlesFinder {
 			
 			if (SubTitlesUtils.isMatch(text, season, episode)) {
 				String href = node.absUrl("href");
-				return SubTitlesZip.selectBestSubtitles( getBytes(href, url), release, language );
+				return SubTitlesZip.selectBestSubtitles(this, getBytes(href, url), release, language );
 			}
 			
 		}

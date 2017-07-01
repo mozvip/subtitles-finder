@@ -86,7 +86,7 @@ public class Podnapisi extends SubtitlesFinder implements EpisodeSubtitlesFinder
 
 		if (href != null) {
 			byte[] bytes = getBytes(href, url);
-			return SubTitlesZip.selectBestSubtitles(bytes, release, locale);
+			return SubTitlesZip.selectBestSubtitles(this, bytes, release, locale);
 		}
 		
 		return null;

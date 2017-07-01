@@ -8,15 +8,14 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.github.mozvip.subtitles.RemoteSubTitles;
-import com.github.mozvip.subtitles.betaseries.BetaSeries;
 
 public class BetaSeriesTest {
 
 	private static BetaSeries finder ;
-	
+
 	@BeforeClass
 	public static void init() throws Exception {
-		finder = new BetaSeries(System.getenv("BETASERIES_LOGIN"), System.getenv("BETASERIES_PASSWORD"));
+		finder = new BetaSeries.Builder().login(System.getenv("BETASERIES_LOGIN")).password(System.getenv("BETASERIES_PASSWORD")).build();
 	}
 	
 	@Test

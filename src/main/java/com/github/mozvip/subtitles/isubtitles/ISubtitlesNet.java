@@ -55,11 +55,11 @@ public class ISubtitlesNet extends SubtitlesFinder implements MovieSubtitlesFind
 			}
 			
 			if (hasRelease) {
-				
+
 				String downloadUrl = row.select("a[href*=download]").first().absUrl("href");
 				byte[] zipData = get(downloadUrl, movieUrl).body().bytes();
 				
-				RemoteSubTitles subtitles = SubTitlesZip.selectBestSubtitles(zipData, release, locale);
+				RemoteSubTitles subtitles = SubTitlesZip.selectBestSubtitles(this, zipData, release, locale);
 				subtitles.setScore( 10 );
 				return subtitles;
 			}

@@ -90,11 +90,13 @@ public class OpenSubtitlesOrg extends SubtitlesFinder implements FileHashSubtitl
 			if (data instanceof Object[]) {
 				Object[] results = (Object[]) data;
 				for (Object subtitle : results) {
-					String downloadLink = (String) ((Map) subtitle).get("SubDownloadLink");
-					String subtitlesLink = (String) ((Map) subtitle).get("SubtitlesLink");
-					
+					Map<String, String> subtitleDataMap = (Map) subtitle;
+					String downloadLink = subtitleDataMap.get("SubDownloadLink");
+					String subtitlesLink = subtitleDataMap.get("SubtitlesLink");
+					String title = subtitleDataMap.get("SubFileName");
+
 					byte[] subTitleData = getBytes(downloadLink, subtitlesLink);
-					return new RemoteSubTitles(subTitleData, 20);
+					return new RemoteSubTitles(this, title, subTitleData, 20);
 				}
 			}
 

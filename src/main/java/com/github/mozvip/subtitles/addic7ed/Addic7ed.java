@@ -119,7 +119,17 @@ public class Addic7ed extends SubtitlesFinder implements EpisodeSubtitlesFinder 
 			if (currentURL != null) {
 				Response resp = get( currentURL, episodeUrl );
 				if (resp.code() == 200 && resp.header("Content-Type").contains("text/srt")) {
-					RemoteSubTitles remoteSubTitles = new RemoteSubTitles( resp.body().bytes(), currentScore );
+					
+					String title = resp.header("Content-Disposition"); // FIXME
+
+					try (Scanner scanner = new Scanner( title )) {
+						if (scanner.findInLine(".*filename=\"(.*)\".*") != null) {
+							MatchResult result = scanner.match();
+							title = result.group(1);
+						}
+					}
+					
+					RemoteSubTitles remoteSubTitles = new RemoteSubTitles(this, title, resp.body().bytes(), currentScore );
 					return remoteSubTitles;
 				}
 			}

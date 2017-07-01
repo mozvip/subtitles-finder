@@ -91,7 +91,7 @@ public class TVSubtitlesNet extends SubtitlesFinder implements EpisodeSubtitlesF
 			String downloadURL = document.select("a:has(h3)").first().absUrl("href");
 			
 			byte[] bytes = getBytes( downloadURL, href );
-			return SubTitlesZip.selectBestSubtitles( bytes, release, locale );
+			return SubTitlesZip.selectBestSubtitles(this, bytes, release, locale );
 		}
 
 		return null;

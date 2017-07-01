@@ -19,8 +19,28 @@ import com.github.mozvip.subtitles.SubtitlesFinder;
 import okhttp3.Response;
 
 public class BetaSeries extends SubtitlesFinder implements EpisodeSubtitlesFinder {
+	
+	public static final class Builder {
 
-	public BetaSeries(String login, String password) throws IOException {
+		private String login, password;
+
+		public Builder login(String login) {
+			this.login = login;
+			return this;
+		}
+
+		public Builder password(String password) {
+			this.password = password;
+			return this;
+		}
+
+		public BetaSeries build() throws IOException {
+			return new BetaSeries(login, password);
+		}
+
+	}
+
+	private BetaSeries(String login, String password) throws IOException {
 		post("https://www.betaseries.com/apps/login.php", "http://www.betaseries.com/introduction",
 				"login=" + login, "pass=" + password);
 	}
@@ -79,9 +99,9 @@ public class BetaSeries extends SubtitlesFinder implements EpisodeSubtitlesFinde
 				}
 	
 				if (filename.endsWith(".zip")) {
-					subtitle = SubTitlesZip.selectBestSubtitles(response.body().bytes(), release, locale);
+					subtitle = SubTitlesZip.selectBestSubtitles(this, response.body().bytes(), release, locale);
 				} else {
-					subtitle = new RemoteSubTitles(response.body().bytes(), 1);
+					subtitle = new RemoteSubTitles(this, filename, response.body().bytes(), 1);
 				}
 			}
 			if (subtitle != null) {

@@ -84,7 +84,7 @@ public class SousTitresEU extends SubtitlesFinder implements EpisodeSubtitlesFin
 			if (SubTitlesUtils.isExactMatch(text, season, episode)) {
 
 				byte[] bytes = getBytes(href, url);
-				RemoteSubTitles currentRemoteSubTitles = SubTitlesZip.selectBestSubtitles(bytes, release, locale);
+				RemoteSubTitles currentRemoteSubTitles = SubTitlesZip.selectBestSubtitles(this, bytes, release, locale);
 				if (currentRemoteSubTitles != null) {
 					if (bestSubTitles == null || currentRemoteSubTitles.getScore() > bestSubTitles.getScore()) {
 						bestSubTitles = currentRemoteSubTitles;
@@ -94,7 +94,7 @@ public class SousTitresEU extends SubtitlesFinder implements EpisodeSubtitlesFin
 			} else if (SubTitlesUtils.isSeasonMatch(text, season)) {
 
 				byte[] bytes = getBytes(href, url);
-				RemoteSubTitles currentRemoteSubTitles = SubTitlesZip.selectBestSubtitles(bytes, release, locale,
+				RemoteSubTitles currentRemoteSubTitles = SubTitlesZip.selectBestSubtitles(this, bytes, release, locale,
 						season, episode);
 				if (currentRemoteSubTitles != null) {
 					if (bestSubTitles == null || currentRemoteSubTitles.getScore() > bestSubTitles.getScore()) {
@@ -148,7 +148,7 @@ public class SousTitresEU extends SubtitlesFinder implements EpisodeSubtitlesFin
 
 			try {
 				byte[] bytes = getBytes(href, url);			
-				RemoteSubTitles currentRemoteSubTitles = SubTitlesZip.selectBestSubtitles(bytes, release, locale);
+				RemoteSubTitles currentRemoteSubTitles = SubTitlesZip.selectBestSubtitles(this, bytes, release, locale);
 				if (currentRemoteSubTitles != null) {
 					if (bestSubTitles == null || currentRemoteSubTitles.getScore() > bestSubTitles.getScore()) {
 						bestSubTitles = currentRemoteSubTitles;

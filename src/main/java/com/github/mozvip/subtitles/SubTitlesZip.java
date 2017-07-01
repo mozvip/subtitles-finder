@@ -46,15 +46,11 @@ public class SubTitlesZip {
 		return score;
 	}
 	
-	public static RemoteSubTitles selectBestSubtitles(byte[] zipData, String release, Locale locale) throws IOException {
-		return selectBestSubtitles(zipData, release, locale, false, -1, -1);
+	public static RemoteSubTitles selectBestSubtitles(SubtitlesFinder finder, byte[] zipData, String release, Locale locale) throws IOException {
+		return selectBestSubtitles(finder, zipData, release, locale, -1, -1);
 	}
 
-	public static RemoteSubTitles selectBestSubtitles(byte[] zipData, String release, Locale locale, int season, int episode) throws IOException {
-		return selectBestSubtitles(zipData, release, locale, true, season, episode);
-	}
-
-	protected static RemoteSubTitles selectBestSubtitles(byte[] zipData, String release, Locale locale, boolean checkEpisode, int season, int episode) throws IOException {
+	public static RemoteSubTitles selectBestSubtitles(SubtitlesFinder finder, byte[] zipData, String release, Locale locale, int season, int episode) throws IOException {
 		SeekableInMemoryByteChannel inMemoryByteChannel = new SeekableInMemoryByteChannel(zipData);
 		ZipFile zip = new ZipFile( inMemoryByteChannel );
 		try {
@@ -75,7 +71,7 @@ public class SubTitlesZip {
 					continue;
 				}
 				
-				if (checkEpisode && !SubTitlesUtils.isMatch(entry.getName(), season, episode)) {
+				if (season > 0 && !SubTitlesUtils.isMatch(entry.getName(), season, episode)) {
 					continue;
 				}
 	
@@ -101,7 +97,7 @@ public class SubTitlesZip {
 				byte[] data = new byte[ (int) selectedEntry.getSize() ];
 				IOUtils.readFully( zip.getInputStream(selectedEntry) , data );
 				
-				return new RemoteSubTitles( data, maxScore );
+				return new RemoteSubTitles(finder, selectedEntry.getName(), data, maxScore );
 			}
 		} finally {
 			zip.close();
