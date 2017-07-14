@@ -11,10 +11,10 @@ import org.jsoup.select.Elements;
 
 import com.github.mozvip.subtitles.EpisodeSubtitlesFinder;
 import com.github.mozvip.subtitles.MovieSubtitlesFinder;
-import com.github.mozvip.subtitles.Release;
 import com.github.mozvip.subtitles.RemoteSubTitles;
 import com.github.mozvip.subtitles.SubTitlesZip;
 import com.github.mozvip.subtitles.SubtitlesFinder;
+import com.github.mozvip.subtitles.model.Release;
 
 public class Podnapisi extends SubtitlesFinder implements EpisodeSubtitlesFinder, MovieSubtitlesFinder {
 

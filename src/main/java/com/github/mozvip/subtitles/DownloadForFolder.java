@@ -11,14 +11,16 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Scanner;
 import java.util.Set;
-import java.util.regex.MatchResult;
 
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.mozvip.subtitles.model.MovieInfo;
+import com.github.mozvip.subtitles.model.TVShowEpisodeInfo;
+import com.github.mozvip.subtitles.model.VideoInfo;
+import com.github.mozvip.subtitles.model.VideoNameParser;
 import com.github.mozvip.subtitles.opensubtitles.OpenSubtitlesHasher;
 
 public class DownloadForFolder {
@@ -69,49 +71,41 @@ public class DownloadForFolder {
 				}
 				
 				if (subTitles == null) {
-				
-					try (Scanner sc = new Scanner(path.getFileName().toString())) {
-						String token = sc.findInLine("(.*)[\\.\\s-_](19\\d{2}|20\\d{2})[\\.\\s-_](.*)[\\.]\\w+");
-						if ( token != null) {
-							MatchResult match = sc.match();
-							
-							String movieName = match.group(1).replaceAll("\\.", " ");
-							int year = Integer.parseInt( match.group(2));
-							String release = match.group(3);
-							BigDecimal fps = BigDecimal.valueOf( 25.0d );
-							
-							for (Class<? extends MovieSubtitlesFinder> finderClass : movieSubtitlesFinders) {
-								subTitles = finderClass.newInstance().downloadMovieSubtitles(movieName, year, release, fps, locale);
-							}
-						} else {
-							
-							// Broadchurch.S03E02.FASTSUB.VOSTFR.720p.HDTV.x264-ARK01.mkv
-							
-							token = sc.findInLine("(.*)[\\.\\s-_]S(\\d{2})E(\\d{2})[\\.\\s-_](.*)[\\.]\\w+");
-							
-							if (token != null) {
-								MatchResult match = sc.match();
-								
-								String showName = match.group(1).replaceAll("\\.", " ");
-								int season = Integer.parseInt( match.group(2));
-								int episode = Integer.parseInt( match.group(3));
-								String release = match.group(4);
-								
-								for (Class<? extends EpisodeSubtitlesFinder> finderClass : episodeSubtitlesFinders) {
-									try {
-										subTitles = finderClass.newInstance().downloadEpisodeSubtitle(showName, season, episode, release, locale);
-										if (subTitles != null) {
-											break;
-										}
-									} catch (Exception e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
-									}
-								}
-							}
-							
-						}
+					
+					VideoInfo videoInfo = VideoNameParser.getVideoInfo(path);
+					
+					if (videoInfo == null) {
+						continue;
 					}
+					
+					if (videoInfo instanceof TVShowEpisodeInfo) {
+						
+						TVShowEpisodeInfo episodeInfo = (TVShowEpisodeInfo) videoInfo;
+						
+						for (Class<? extends EpisodeSubtitlesFinder> finderClass : episodeSubtitlesFinders) {
+							try {
+								subTitles = SubTitleFinderFactory.createEpisodeSubtitlesFinder(finderClass).downloadEpisodeSubtitle(episodeInfo.getName(), episodeInfo.getSeason(), episodeInfo.getFirstEpisode(), episodeInfo.getRelease(), locale);
+								if (subTitles != null) {
+									break;
+								}
+							} catch (Exception e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}
+
+					} else if (videoInfo instanceof MovieInfo) {
+						
+						MovieInfo movieInfo = (MovieInfo) videoInfo;
+						
+						BigDecimal fps = BigDecimal.valueOf( 25.0d );
+						
+						for (Class<? extends MovieSubtitlesFinder> finderClass : movieSubtitlesFinders) {
+							subTitles = SubTitleFinderFactory.createMovieSubtitlesFinder( finderClass).downloadMovieSubtitles(movieInfo.getName(), movieInfo.getYear(), movieInfo.getRelease(), fps, locale);
+						}
+
+					}
+
 				}
 				
 				

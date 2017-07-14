@@ -8,10 +8,10 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import com.github.mozvip.subtitles.MovieSubtitlesFinder;
-import com.github.mozvip.subtitles.Release;
 import com.github.mozvip.subtitles.RemoteSubTitles;
 import com.github.mozvip.subtitles.SubTitlesZip;
 import com.github.mozvip.subtitles.SubtitlesFinder;
+import com.github.mozvip.subtitles.model.Release;
 
 public class ISubtitlesNet extends SubtitlesFinder implements MovieSubtitlesFinder {
 	

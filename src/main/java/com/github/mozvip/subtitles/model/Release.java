@@ -1,4 +1,4 @@
-package com.github.mozvip.subtitles;
+package com.github.mozvip.subtitles.model;
 
 import java.util.ArrayList;
 import java.util.Collection;

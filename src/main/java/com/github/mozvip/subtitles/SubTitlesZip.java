@@ -12,6 +12,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.mozvip.subtitles.model.Release;
+
 public class SubTitlesZip {
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger( SubTitlesZip.class );
@@ -52,7 +54,16 @@ public class SubTitlesZip {
 
 	public static RemoteSubTitles selectBestSubtitles(SubtitlesFinder finder, byte[] zipData, String release, Locale locale, int season, int episode) throws IOException {
 		SeekableInMemoryByteChannel inMemoryByteChannel = new SeekableInMemoryByteChannel(zipData);
-		ZipFile zip = new ZipFile( inMemoryByteChannel );
+		ZipFile zip;
+		try {
+			zip = new ZipFile( inMemoryByteChannel );
+		} catch (Exception e) {
+
+			LOGGER.error("Downloaded file is not a zip file :\n{}",  new String(zipData) );
+			
+			return null;
+
+		}
 		try {
 	
 			ZipArchiveEntry selectedEntry = null;
