@@ -35,7 +35,7 @@ public abstract class SubtitlesFinder {
 
 	protected String extractNameFromShowName(String name) {
 		try (Scanner scanner = new Scanner(name)) {
-			if (scanner.findInLine("(.*)\\s+\\((19|20\\d{2})\\)") != null) {
+			if (scanner.findInLine("(.*)\\s*\\((19|20\\d{2})\\)") != null) {
 				MatchResult match = scanner.match();
 				name = match.group(1);
 			}

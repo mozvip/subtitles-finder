@@ -15,7 +15,7 @@ import com.github.mozvip.subtitles.model.Release;
 
 public class ISubtitlesNet extends SubtitlesFinder implements MovieSubtitlesFinder {
 	
-	public final static String BASE_URL = "https://isubtitles.net";
+	public final static String BASE_URL = "https://isubtitles.in";
 
 	@Override
 	public RemoteSubTitles downloadMovieSubtitles(String movieName, int year, String release, BigDecimal fps,

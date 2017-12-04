@@ -25,25 +25,7 @@ public class RegExp {
 
 	private RegExp() {
 	}
-	
-	public static String clean( String text, String[] extractionRegexps ) {
-		String cleanName = text.trim();
-		boolean anotherPass = true;
-		while (anotherPass) {
-			for (String regExp : extractionRegexps) {
-				String[] groups = RegExp.parseGroups(cleanName, regExp);
-				if (groups != null) {
-					cleanName = groups[0].trim();
-					anotherPass = true;
-					continue;
-				}
-			}
-			anotherPass = false;
-		}
 
-		return cleanName;
-	}
-	
 	public static String[] parseGroups( String text, String regex ) {
 		
 		if (text != null) {

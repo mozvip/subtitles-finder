@@ -3,6 +3,8 @@ package com.github.mozvip.subtitles.addic7ed;
 import java.io.IOException;
 import java.util.Locale;
 
+import com.github.mozvip.subtitles.RemoteSubTitles;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -18,18 +20,21 @@ public class Addic7edTest {
 	}
 	
 	@Test
-	public void testDownloadSubtitle() throws IOException {
-		finder.downloadEpisodeSubtitle("Scream Queens (2015)", 2, 1, "AVS", Locale.FRENCH);
+	public void testScreamQueens() throws IOException {
+		final RemoteSubTitles remoteSubTitles = finder.downloadEpisodeSubtitle("Scream Queens (2015)", 2, 1, "AVS", Locale.FRENCH);
+		Assert.assertTrue( remoteSubTitles != null && remoteSubTitles.getTitle().contains(".AVS."));
 	}
 
 	@Test
 	public void testGot() throws IOException {
-		finder.downloadEpisodeSubtitle("Game of Thrones", 2, 1, "IMMERSE", Locale.FRENCH);
+		final RemoteSubTitles remoteSubTitles = finder.downloadEpisodeSubtitle("Game of Thrones", 2, 1, "ASAP", Locale.FRENCH);
+		Assert.assertTrue( remoteSubTitles != null && remoteSubTitles.getTitle().contains(".ASAP."));
 	}
 
 	@Test
 	public void testAmericanCrime() throws IOException {
-		finder.downloadEpisodeSubtitle("American Crime", 1, 1, "LOL", Locale.FRENCH);
+		final RemoteSubTitles remoteSubTitles = finder.downloadEpisodeSubtitle("Shades of Blue", 1, 5, "AVS", Locale.FRENCH);
+		Assert.assertTrue( remoteSubTitles != null && remoteSubTitles.getTitle().contains(".AVS."));
 	}
 
 }

@@ -41,7 +41,7 @@ public class BetaSeries extends SubtitlesFinder implements EpisodeSubtitlesFinde
 	}
 
 	private BetaSeries(String login, String password) throws IOException {
-		post("https://www.betaseries.com/apps/login.php", "http://www.betaseries.com/introduction",
+		Response post = post("https://www.betaseries.com/apps/login.php", "http://www.betaseries.com/identification",
 				"login=" + login, "pass=" + password);
 	}
 

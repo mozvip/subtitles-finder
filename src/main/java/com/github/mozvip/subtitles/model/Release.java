@@ -58,6 +58,7 @@ public enum Release {
 	NOTV( new String[] {".notv.", "-notv.", "NoTV"} ),
 	PDTV( new String[] {"pdtv"} ),
 	P0W4( new String[] {"P0W4"} ),
+	QOQ( new String[] {"QOQ"} ),
 	SAiNTS( new String[] {"-SAiNTS.", "SAiNTS"} ),
 	SAPHIRE( new String[] {"SAPHiRE"}),
 	SITV( new String[] {"sitv"} ),

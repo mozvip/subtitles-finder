@@ -26,13 +26,13 @@ import okhttp3.Response;
 public class Addic7ed extends SubtitlesFinder implements EpisodeSubtitlesFinder {
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger( Addic7ed.class );
-	private Semaphore semaphore = new Semaphore(1);	// this is to avoid multiple concurrent invocations
+	private final Semaphore semaphore = new Semaphore(1);	// this is to avoid multiple concurrent invocations
 
 	public Addic7ed() throws IOException {
 		init();
 	}
 
-	private Map<String, String> shows = new HashMap<>();
+	private final Map<String, String> shows = new HashMap<>();
 	
 	private String getShowId( String showName ) {
 		String name = getShowName( showName );

@@ -3,6 +3,8 @@ package com.github.mozvip.subtitles.usub.net;
 import java.io.IOException;
 import java.util.Locale;
 
+import com.github.mozvip.subtitles.RemoteSubTitles;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -19,13 +21,15 @@ public class USubTest extends AbstractSubtitleFinderTest {
 	}
 	
 	@Test
-	public void testDownloadSubtitle() throws IOException {
-		finder.downloadEpisodeSubtitle("Scream Queens (2015)", 2, 1, "AVS", Locale.FRENCH);
+	public void testModernFamily() throws IOException {
+		RemoteSubTitles remoteSubTitles = finder.downloadEpisodeSubtitle("Modern Family", 9, 4, "AMZN", Locale.FRENCH);
+		Assert.assertTrue(remoteSubTitles != null && remoteSubTitles.getTitle().contains(".amzn."));
 	}
 
 	@Test
 	public void testGot() throws IOException {
-		finder.downloadEpisodeSubtitle("Game of Thrones", 2, 1, "IMMERSE", Locale.FRENCH);
+		RemoteSubTitles remoteSubTitles = finder.downloadEpisodeSubtitle("Game of Thrones", 2, 1, "IMMERSE", Locale.FRENCH);
+		Assert.assertTrue(remoteSubTitles != null && remoteSubTitles.getTitle().contains(".imm."));
 	}
 
 }

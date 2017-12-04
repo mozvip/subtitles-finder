@@ -25,8 +25,8 @@ import com.github.mozvip.subtitles.opensubtitles.OpenSubtitlesHasher;
 
 public class DownloadForFolder {
 	
-	private final static Logger logger = LoggerFactory.getLogger( DownloadForFolder.class);
-	
+	private final static Logger LOGGER = LoggerFactory.getLogger( DownloadForFolder.class);
+
 	public static List<Path> getContents(Path folder, Filter<Path> filter, boolean recursive) throws IOException {
 		List<Path> results = new ArrayList<>();
 		List<Path> folderResults = new ArrayList<>();
@@ -48,70 +48,23 @@ public class DownloadForFolder {
 	}
 
 	public static void main(String[] args) throws IOException {
-		
-		Reflections reflections = new Reflections("com.github.mozvip.subtitles");
-		Set<Class<? extends FileHashSubtitlesFinder>> fileHashSubtitlesFinders = reflections.getSubTypesOf(FileHashSubtitlesFinder.class);
-		Set<Class<? extends MovieSubtitlesFinder>> movieSubtitlesFinders = reflections.getSubTypesOf(MovieSubtitlesFinder.class);
-		Set<Class<? extends EpisodeSubtitlesFinder>> episodeSubtitlesFinders= reflections.getSubTypesOf(EpisodeSubtitlesFinder.class);
 
-		Locale locale = Locale.FRENCH;
+		if (args.length != 2) {
+			System.err.println("Usage : path language");
+			System.exit(-1);
+		}
+
+		SubtitleDownloader downloader = new SubtitleDownloader();
+
+		Locale locale = Locale.forLanguageTag(args[1]);
 		
-		List<Path> contents = getContents(Paths.get("\\\\DLINK-4T\\Volume_1\\series\\Broadchurch\\Season 03"), VideoFileFilter.getInstance(), true);
+		List<Path> contents = getContents(Paths.get(args[0]), VideoFileFilter.getInstance(), true);
 		for (Path path : contents) {
 			try {
-				logger.info("Searching for subtitles for {}", path.toAbsolutePath().toString());
-				
-				String fileHash = OpenSubtitlesHasher.computeHash(path);
-				long videoByteSize = Files.size( path );
-				
-				RemoteSubTitles subTitles = null;
-				
-				for (Class<? extends FileHashSubtitlesFinder> finderClass : fileHashSubtitlesFinders) {
-					subTitles = finderClass.newInstance().downloadSubtitlesForFileHash(fileHash, videoByteSize, locale);
-				}
-				
-				if (subTitles == null) {
-					
-					VideoInfo videoInfo = VideoNameParser.getVideoInfo(path);
-					
-					if (videoInfo == null) {
-						continue;
-					}
-					
-					if (videoInfo instanceof TVShowEpisodeInfo) {
-						
-						TVShowEpisodeInfo episodeInfo = (TVShowEpisodeInfo) videoInfo;
-						
-						for (Class<? extends EpisodeSubtitlesFinder> finderClass : episodeSubtitlesFinders) {
-							try {
-								subTitles = SubTitleFinderFactory.createEpisodeSubtitlesFinder(finderClass).downloadEpisodeSubtitle(episodeInfo.getName(), episodeInfo.getSeason(), episodeInfo.getFirstEpisode(), episodeInfo.getRelease(), locale);
-								if (subTitles != null) {
-									break;
-								}
-							} catch (Exception e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-						}
-
-					} else if (videoInfo instanceof MovieInfo) {
-						
-						MovieInfo movieInfo = (MovieInfo) videoInfo;
-						
-						BigDecimal fps = BigDecimal.valueOf( 25.0d );
-						
-						for (Class<? extends MovieSubtitlesFinder> finderClass : movieSubtitlesFinders) {
-							subTitles = SubTitleFinderFactory.createMovieSubtitlesFinder( finderClass).downloadMovieSubtitles(movieInfo.getName(), movieInfo.getYear(), movieInfo.getRelease(), fps, locale);
-						}
-
-					}
-
-				}
-				
-				
+				if (downloader.findSubtitlesFor(path, locale))
+					continue;
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				LOGGER.error(e.getMessage(), e);
 			}
 		}
 		
