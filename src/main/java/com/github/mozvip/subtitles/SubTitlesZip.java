@@ -1,7 +1,9 @@
 package com.github.mozvip.subtitles;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Locale;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
@@ -50,6 +52,48 @@ public class SubTitlesZip {
 	
 	public static RemoteSubTitles selectBestSubtitles(SubtitlesFinder finder, byte[] zipData, String release, Locale locale) throws IOException {
 		return selectBestSubtitles(finder, zipData, release, locale, -1, -1);
+	}
+
+	public static List<String> listofFileNames(byte[] zipData) throws IOException {
+		SeekableInMemoryByteChannel inMemoryByteChannel = new SeekableInMemoryByteChannel(zipData);
+		List<String> filesNames = new ArrayList<>();
+		try (ZipFile zip = new ZipFile(inMemoryByteChannel)) {
+			Enumeration<ZipArchiveEntry> entries = zip.getEntries();
+			while(entries.hasMoreElements()) {
+				ZipArchiveEntry entry = entries.nextElement();
+				if (entry.isDirectory() || entry.getSize() == 0) {
+					continue;
+				}
+				filesNames.add( entry.getName());
+			}
+		}
+		return filesNames;
+	}
+
+	public static RemoteSubTitles firstFromZipFile(SubtitlesFinder finder, byte[] zipData, int score) throws IOException {
+		SeekableInMemoryByteChannel inMemoryByteChannel = new SeekableInMemoryByteChannel(zipData);
+		try (ZipFile zip = new ZipFile(inMemoryByteChannel)) {
+			ZipArchiveEntry selectedEntry = null;
+
+			Enumeration<ZipArchiveEntry> entries = zip.getEntries();
+			while(entries.hasMoreElements()) {
+				ZipArchiveEntry entry = entries.nextElement();
+				if (entry.isDirectory()) {
+					continue;
+				}
+				if (entry.getName().endsWith(".srt")) {
+					selectedEntry = entry;
+					break;
+				}
+			}
+			if ( selectedEntry != null ) {
+				byte[] data = new byte[ (int) selectedEntry.getSize() ];
+				IOUtils.readFully( zip.getInputStream(selectedEntry) , data );
+				return new RemoteSubTitles(finder, selectedEntry.getName(), data, score );
+			}
+		}
+
+		return null;
 	}
 
 	public static RemoteSubTitles selectBestSubtitles(SubtitlesFinder finder, byte[] zipData, String release, Locale locale, int season, int episode) throws IOException {
@@ -102,9 +146,7 @@ public class SubTitlesZip {
 			}
 			
 			if ( selectedEntry != null ) {
-				
-				LOGGER.info("selecting " + selectedEntry.getName() + " (score=" + maxScore + ")");
-	
+
 				byte[] data = new byte[ (int) selectedEntry.getSize() ];
 				IOUtils.readFully( zip.getInputStream(selectedEntry) , data );
 				

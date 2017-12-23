@@ -4,7 +4,7 @@ import com.github.mozvip.subtitles.model.MovieInfo;
 import com.github.mozvip.subtitles.model.TVShowEpisodeInfo;
 import com.github.mozvip.subtitles.model.VideoInfo;
 import com.github.mozvip.subtitles.model.VideoNameParser;
-import com.github.mozvip.subtitles.opensubtitles.OpenSubtitlesHasher;
+import com.github.mozvip.subtitles.providers.OpenSubtitlesHasher;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,8 +31,20 @@ public class SubtitleDownloader {
         episodeSubtitlesFinders= reflections.getSubTypesOf(EpisodeSubtitlesFinder.class);
     }
 
-    public boolean findSubtitlesFor(Path path, Locale locale) throws Exception {
-        LOGGER.info("Searching for subtitles for {}", path.toAbsolutePath().toString());
+    public boolean findSubtitlesFor(Path path, Locale locale, boolean overwrite) throws Exception {
+
+        String fileName = path.getFileName().toString();
+        String baseName = fileName.substring(0, fileName.lastIndexOf('.'));
+        Path destinationFile = path.getParent().resolve(String.format("%s.%s.srt", baseName, locale.getLanguage()));
+
+        if (Files.exists(destinationFile) && !overwrite) {
+            LOGGER.info("An existing subtitle has been found and overwrite is not allowed");
+            return false;
+        }
+
+        VideoInfo videoInfo = VideoNameParser.getVideoInfo(path);
+
+        LOGGER.info("Searching for subtitles for {}, release = {}, source = {}, lang = {}", path.toAbsolutePath().toString(), videoInfo != null ? videoInfo.getRelease() : "UNKNOWN", videoInfo != null ? videoInfo.getSource() : "UNKNOWN", locale.getLanguage());
 
         String fileHash = OpenSubtitlesHasher.computeHash(path);
         long videoByteSize = Files.size( path );
@@ -45,8 +57,6 @@ public class SubtitleDownloader {
 
         if (currentSubTitles == null) {
 
-            VideoInfo videoInfo = VideoNameParser.getVideoInfo(path);
-
             if (videoInfo == null) {
                 return true;
             }
@@ -58,7 +68,7 @@ public class SubtitleDownloader {
                 int currentScore = 0;
                 for (Class<? extends EpisodeSubtitlesFinder> finderClass : episodeSubtitlesFinders) {
                     try {
-                        RemoteSubTitles subTitles = SubTitleFinderFactory.createInstance(finderClass).downloadEpisodeSubtitle(episodeInfo.getName(), episodeInfo.getSeason(), episodeInfo.getFirstEpisode(), episodeInfo.getRelease(), locale);
+                        RemoteSubTitles subTitles = SubTitleFinderFactory.createInstance(finderClass).downloadEpisodeSubtitle(episodeInfo.getName(), episodeInfo.getSeason(), episodeInfo.getFirstEpisode(), episodeInfo.getRelease(), episodeInfo.getSource(), locale);
                         if (subTitles != null) {
                             if (subTitles.getScore() > currentScore) {
                                 currentScore = subTitles.getScore();
@@ -91,9 +101,6 @@ public class SubtitleDownloader {
         }
 
         if (currentSubTitles != null) {
-            String fileName = path.getFileName().toString();
-            String baseName = fileName.substring(0, fileName.toString().lastIndexOf('.'));
-            Path destinationFile = path.getParent().resolve(String.format("%s.%s.srt", baseName, locale.getLanguage()));
             try (OutputStream output = Files.newOutputStream(destinationFile)) {
                 output.write(currentSubTitles.getData());
             }

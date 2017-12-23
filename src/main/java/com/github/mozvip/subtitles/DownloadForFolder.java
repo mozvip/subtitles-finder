@@ -1,30 +1,37 @@
 package com.github.mozvip.subtitles;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.nio.file.DirectoryStream;
 import java.nio.file.DirectoryStream.Filter;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
+import java.util.regex.Pattern;
 
-import org.reflections.Reflections;
+import com.beust.jcommander.JCommander;
+import com.beust.jcommander.Parameter;
+import com.github.mozvip.subtitles.cli.LocaleConverter;
+import com.github.mozvip.subtitles.cli.PathConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.mozvip.subtitles.model.MovieInfo;
-import com.github.mozvip.subtitles.model.TVShowEpisodeInfo;
-import com.github.mozvip.subtitles.model.VideoInfo;
-import com.github.mozvip.subtitles.model.VideoNameParser;
-import com.github.mozvip.subtitles.opensubtitles.OpenSubtitlesHasher;
-
 public class DownloadForFolder {
-	
+
+	@Parameter(names={"-o", "-overwrite"}, description="Overwrite existing subtitles")
+	private boolean overwrite = false;
+
+	@Parameter(names={"-f", "-folder"}, description = "Folder that contains videos", required=true, converter= PathConverter.class)
+	private List<Path> folders;
+
+	@Parameter(names={"-l", "-lang"}, description = "Language for subtitles", required=true, converter=LocaleConverter.class)
+	private Locale locale;
+
+	@Parameter(names={"-i", "-ignore"}, description = "Ignore files whose name contain this pattern")
+	private List<String> ignorePatterns;
+
 	private final static Logger LOGGER = LoggerFactory.getLogger( DownloadForFolder.class);
 
 	public static List<Path> getContents(Path folder, Filter<Path> filter, boolean recursive) throws IOException {
@@ -47,27 +54,49 @@ public class DownloadForFolder {
 		return results;
 	}
 
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] argv) throws IOException {
 
-		if (args.length != 2) {
-			System.err.println("Usage : path language");
-			System.exit(-1);
-		}
+		DownloadForFolder main = new DownloadForFolder();
+
+		JCommander.newBuilder()
+				.addObject(main)
+				.build()
+				.parse(argv);
 
 		SubtitleDownloader downloader = new SubtitleDownloader();
 
-		Locale locale = Locale.forLanguageTag(args[1]);
-		
-		List<Path> contents = getContents(Paths.get(args[0]), VideoFileFilter.getInstance(), true);
-		for (Path path : contents) {
-			try {
-				if (downloader.findSubtitlesFor(path, locale))
+		// -f \\DLINK-0348F4\Volume_1\series -f \\DLINK-0348F4\Volume_2\series -f \\DLINK-4T\Volume_1\series -f \\DLINK-4T\Volume_2\series -f \\DLINK-5BBBC4\Volume_1\series -f \\DLINK-5BBBC4\Volume_2\series -l fr
+
+		for (Path folder: main.folders) {
+			LOGGER.info("Parsing source folder {}", folder.toAbsolutePath().toString());
+			List<Path> contents = getContents(folder, VideoFileFilter.getInstance(), true);
+			for (Path path : contents) {
+
+				boolean ignore = false;
+				if (main.ignorePatterns != null) {
+					for (String pattern: main.ignorePatterns) {
+						if (path.getFileName().toString().contains(pattern)) {
+							ignore = true;
+							break;
+						}
+					}
+				}
+
+				if (ignore) {
 					continue;
-			} catch (Exception e) {
-				LOGGER.error(e.getMessage(), e);
+				}
+
+				try {
+					if (downloader.findSubtitlesFor(path, main.locale, main.overwrite)) {
+						LOGGER.info("Successfully subtitled {} in {}", path.toAbsolutePath().toString(), main.locale.getLanguage());
+					}
+				} catch (Exception e) {
+					LOGGER.error(e.getMessage(), e);
+				}
 			}
 		}
-		
+
+
 	}
 
 }

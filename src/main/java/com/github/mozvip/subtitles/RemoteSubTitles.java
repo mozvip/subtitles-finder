@@ -6,14 +6,14 @@ public class RemoteSubTitles {
 	private int score;
 	private String title;
 	private SubtitlesFinder finder;
-	
+
 	public RemoteSubTitles( SubtitlesFinder finder, String title, byte[] data, int score ) {
 		this.finder = finder;
 		this.title = title;
 		this.data = data;
 		this.score = score;
 	}
-	
+
 	public SubtitlesFinder getFinder() {
 		return finder;
 	}

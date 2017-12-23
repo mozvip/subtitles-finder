@@ -17,14 +17,6 @@ public class VideoInfo {
 		parseExtraData();
 	}
 
-	public VideoInfo(String name, String quality, String extraNameData) {
-		this( name,  VideoQuality.findMatch( quality ), extraNameData );
-	}
-	
-	public VideoInfo( String name, String extraNameData ) {
-		this( name,  (VideoQuality)null, extraNameData );
-	}
-
 	protected void parseExtraData() {
 		source = VideoSource.findMatch( extraNameData );
 		release = Release.firstMatch(extraNameData).name();
@@ -42,24 +34,13 @@ public class VideoInfo {
 	public VideoQuality getQuality() {
 		return quality;
 	}
-	public void setQuality(VideoQuality quality) {
-		this.quality = quality;
-	}
 
 	public String getRelease() {
 		return release;
 	}
 
-	public void setRelease(String release) {
-		this.release = release;
-	}
-
 	public VideoSource getSource() {
 		return source;
-	}
-
-	public void setSource(VideoSource source) {
-		this.source = source;
 	}
 
 }

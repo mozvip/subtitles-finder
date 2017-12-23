@@ -4,9 +4,17 @@ import java.io.IOException;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
 import java.util.Scanner;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.MatchResult;
 
+import com.github.mozvip.subtitles.model.Release;
+import com.github.mozvip.subtitles.model.TVShowEpisodeInfo;
+import com.github.mozvip.subtitles.model.VideoSource;
+import com.netflix.hystrix.HystrixCommand;
+import com.netflix.hystrix.HystrixCommandGroupKey;
+import com.netflix.hystrix.HystrixCommandProperties;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -17,21 +25,12 @@ import okhttp3.JavaNetCookieJar;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class SubtitlesFinder {
 
-	private OkHttpClient client;
-
-	public SubtitlesFinder() {
-		
-		CookieManager cookieManager = new CookieManager();
-		cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
-		
-		client = new OkHttpClient.Builder()
-				.connectTimeout(30, TimeUnit.SECONDS)
-				.readTimeout(30, TimeUnit.SECONDS)
-				.cookieJar(new JavaNetCookieJar(cookieManager)).build();
-	}
+	private final static Logger LOGGER = LoggerFactory.getLogger(SubtitlesFinder.class);
 
 	protected String extractNameFromShowName(String name) {
 		try (Scanner scanner = new Scanner(name)) {
@@ -43,29 +42,36 @@ public abstract class SubtitlesFinder {
 		return name;
 	}
 
-	public Document getDocument(String url) throws IOException {
+	public Document getDocument(String url) throws ExecutionException {
 		return getDocument(url, null);
 	}
 
-	public Document getDocument(String url, String refererUrl) throws IOException {
-
-		Response response = get(url, refererUrl);
-		return Jsoup.parse(response.body().string(), url);
+	public Document getDocument(String url, String refererUrl) throws ExecutionException {
+        try {
+            Response response = get(url, refererUrl).get();
+            return Jsoup.parse(response.body().string(), url);
+        } catch (Exception e) {
+            throw new ExecutionException(e);
+        }
 	}
 
-	public byte[] getBytes(String url, String refererUrl) throws IOException {
-		Response response = get(url, refererUrl);
-		if (response.code() >= 400) {
-			throw new IOException("HTTP request failed");
-		}
-		return response.body().bytes();
+	public byte[] getBytes(String url, String refererUrl) throws ExecutionException {
+	    try {
+            Response response = get(url, refererUrl).get();
+            if (response.code() >= 400) {
+                throw new IOException("HTTP request failed");
+            }
+            return response.body().bytes();
+        } catch (Exception e) {
+            throw new ExecutionException(e);
+        }
 	}
 
-	protected void submit(Element formElement, String... params) throws IOException {
+	protected void submit(Element formElement, String... params) {
 		post(formElement.absUrl("action"), formElement.baseUri(), params);
 	}
 
-	public Response post(String url, String refererUrl, String... params) throws IOException {
+	public Future<Response> post(String url, String refererUrl, String... params) {
 		FormBody.Builder formBodyBuilder = new FormBody.Builder();
 		for (String param : params) {
 
@@ -82,8 +88,7 @@ public abstract class SubtitlesFinder {
 		builder.post(formBody);
 		Request request = builder.build();
 
-		Response response = client.newCall(request).execute();
-		return response;
+		return new HttpRequestCommand(request).queue();
 	}
 
 	private Request.Builder getRequestBuilder(String url, String refererUrl) {
@@ -97,11 +102,27 @@ public abstract class SubtitlesFinder {
 		return builder;
 	}
 
-	protected Response get(String url, String refererUrl) throws IOException {
+	protected Future<Response> get(String url, String refererUrl) {
 		Request.Builder builder = getRequestBuilder(url, refererUrl);
 		Request request = builder.build();
-		Response response = client.newCall(request).execute();
-		return response;
+        return new HttpRequestCommand(request).queue();
+	}
+
+	protected int evaluateSubtitleForRelease(String subtitleName, String release, VideoSource source) {
+		int score = 1;
+
+		Release subtitleRelease = Release.firstMatch(subtitleName);
+		if (subtitleRelease != null && release != null && subtitleRelease.match( release )) {
+			score = 15;
+		}
+
+		VideoSource subtitleSource = VideoSource.findMatch(subtitleName);
+		if (subtitleSource != null && source != null && subtitleSource.equals( source )) {
+			score += 5;
+		}
+
+		LOGGER.info("{} - Evaluated {} - score = {}", this.getClass().getSimpleName(), subtitleName, score);
+		return score;
 	}
 
 }

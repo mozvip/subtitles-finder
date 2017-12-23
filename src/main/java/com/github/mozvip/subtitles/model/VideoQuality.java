@@ -4,20 +4,17 @@ import org.apache.commons.lang3.StringUtils;
 
 public enum VideoQuality {
 	
-	SD( new String[] {" SD ", "DVDRIP", "dvd9" } ),
+	SD( new String[] {"DVDRIP", "dvd9" } ),
 	_720p(new String[] {"720p"}),
-	_1080p(new String[] {"1080p"});
+	_1080p(new String[] {"1080p"}),
+	_2160p(new String[] {"2160p"});
 	
 	private String[] identifiers;
 	
 	private VideoQuality(String[] identifiers) {
 		this.identifiers = identifiers;
 	}
-	
-	public String[] getAliases() {
-		return identifiers;
-	}
-	
+
 	public boolean match( String text ) {
 		if (identifiers != null) {
 			for (String identifier : identifiers) {
@@ -26,7 +23,7 @@ public enum VideoQuality {
 				}
 			}
 		}
-		return false;
+		return StringUtils.containsIgnoreCase(text, name());
 	}
 	
 	public static VideoQuality findMatch( String text ) {

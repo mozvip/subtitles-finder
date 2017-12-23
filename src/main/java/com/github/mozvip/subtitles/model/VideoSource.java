@@ -5,9 +5,9 @@ import org.apache.commons.lang3.StringUtils;
 public enum VideoSource {
 
 	DVD( new String[] {"dvdrip", "dvd-rip"}),
-	BLURAY( new String[] {"bluray", "blu-ray"}),
-	HDTV( new String[] {"hdtv"}),
-	WEB_DL( new String[] {"WEB-DL", "WEBDL", "WEB.DL"});
+	BLURAY( new String[] {"blu-ray", "BDRip"}),
+	HDTV,
+	WEB_DL( new String[] {"WEB"});
 
 	private String[] identifiers;
 
@@ -15,13 +15,18 @@ public enum VideoSource {
 		this.identifiers = identifiers;
 	}
 
+	private VideoSource() {
+	}
+
 	public boolean match( String text ) {
-		for (String identifier : identifiers) {
-			if (StringUtils.containsIgnoreCase(text, identifier)) {
-				return true;
+		if (identifiers != null) {
+			for (String identifier : identifiers) {
+				if (StringUtils.containsIgnoreCase(text, identifier)) {
+					return true;
+				}
 			}
 		}
-		return false;
+		return StringUtils.containsIgnoreCase(text, name());
 	}
 
 	public static VideoSource findMatch( String text ) {

@@ -9,7 +9,7 @@ import com.github.mozvip.subtitles.RegExp;
 
 public class VideoNameParser {
 
-	private final static String NAME_REGEXP = "[é!&,'\\[\\]\\w\\s\\.\\d-:½]+";
+	private final static String NAME_REGEXP = ".+";
 	public final static String SEPARATOR_REGEXP = "[\\s\\.]+";
 	
 	private static String[] filters = new String[] {
@@ -20,7 +20,7 @@ public class VideoNameParser {
 			"(.*)" + SEPARATOR_REGEXP + "REPACK" + SEPARATOR_REGEXP + "(.*)",
 			"(.*)" + SEPARATOR_REGEXP + "Theatrical\\s+Cut" + SEPARATOR_REGEXP + "(.*)"
 	};
-	
+
 	public static String clean( String title, String[] filtersRegExps ) {
 		
 		title = title.replace('_', ' ');
@@ -40,99 +40,20 @@ public class VideoNameParser {
 	
 		return title;
 	}
-	
-	protected static VideoInfo getVideoInfo( String title ) {
 
-		title = clean( title, filters );
+    public static VideoInfo getVideoInfo( Path path ) {
+	    String title = getTitle(path);
+	    VideoInfo info = getVideoInfo(title);
+        return info != null ? info : getVideoInfo((path.getParent()));
+    }
 
-		String[] groups = RegExp.parseGroups(title, "(" + NAME_REGEXP + ")" + SEPARATOR_REGEXP + "(S\\d{2}E\\d{2}E\\d{2})(.*)");
-		if (groups != null) {
-			String name = getName( groups[0] ); 
-			String seasonEpisode = groups[1];
-			
-			String[] episodeDetails = RegExp.parseGroups( seasonEpisode, "S(\\d{2})E(\\d{2})E(\\d{2})");
-			return new TVShowEpisodeInfo( name, Integer.parseInt( episodeDetails[0]), Integer.parseInt( episodeDetails[1]), Integer.parseInt( episodeDetails[2]), groups[2] );
-		} 
+	public static VideoInfo getVideoInfo( String title ) {
 
-		groups = RegExp.parseGroups(title, "(" + NAME_REGEXP + ")" + SEPARATOR_REGEXP + "(S\\d{2}E\\d{2})(.*)");
-		if (groups != null) {
-			String name = getName( groups[0] ); 
-			String seasonEpisode = groups[1];
-
-			String[] episodeDetails = RegExp.parseGroups( seasonEpisode, "S(\\d{2})E(\\d{2})");
-			return new TVShowEpisodeInfo( name, Integer.parseInt( episodeDetails[0]), Integer.parseInt( episodeDetails[1]), groups[2] );
-		}
-		
-		groups = RegExp.parseGroups(title, "(" + NAME_REGEXP + ")" + SEPARATOR_REGEXP + "(\\d{1}X\\d{2})(.*)");
-		if (groups != null) {
-			String name = getName( groups[0] ); 
-			String seasonEpisode = groups[1];
-			
-			String[] episodeDetails = RegExp.parseGroups( seasonEpisode, "(\\d{1})X(\\d{2})");
-			return new TVShowEpisodeInfo( name, Integer.parseInt( episodeDetails[0]), Integer.parseInt( episodeDetails[1]), groups[2] );
-		} 
-		
-		groups = RegExp.parseGroups(title, "(" + NAME_REGEXP + ")" + SEPARATOR_REGEXP + "S(\\d{1,2})\\s+-\\s+(\\d{1,2})\\s+(.*)");
-		if (groups != null) {
-			String name = getName( groups[0] ); 
-			return new TVShowEpisodeInfo( name, Integer.parseInt( groups[1]), Integer.parseInt( groups[2]), groups[3] );
-		} 
-
-		groups = RegExp.parseGroups(title, "(" + NAME_REGEXP + ")" + SEPARATOR_REGEXP + "(\\d{1})(\\d{2})\\.(.*)");
-		if (groups != null) {
-			String name = getName( groups[0] );
-			return new TVShowEpisodeInfo( name, Integer.parseInt( groups[1]), Integer.parseInt( groups[2]), groups[3] );
+        VideoInfo info = getEpisodeInfo(null, title);
+        if (info == null) {
+            info = getMovieInfo(title);
 		}
 
-		groups = RegExp.parseGroups(title, "(" + NAME_REGEXP + ")" + SEPARATOR_REGEXP + "\\(?(19\\d{2}|20\\d{2})\\)?(.*)");
-		if (groups != null) {
-			String name = getName( groups[0] );
-			return new MovieInfo( name, Integer.parseInt( groups[1]), groups[2] );
-		}
-
-		groups = RegExp.parseGroups(title, "(" + NAME_REGEXP + ")" + SEPARATOR_REGEXP + "(\\d{4}[\\.\\s]{1})(.*)");
-		if (groups != null) {
-			String name = getName( groups[0] );
-			return new MovieInfo( name, Integer.parseInt( groups[1].substring(0,  4)), groups[2] );
-		}
-
-		groups = RegExp.parseGroups(title, "(" + NAME_REGEXP + ")" + SEPARATOR_REGEXP + "(\\d{3})\\D{1}(.*)");
-		if (groups != null) {
-			String name = getName( groups[0] ); 
-			String seasonEpisode = groups[1];
-
-			String[] episodeDetails = RegExp.parseGroups( seasonEpisode, "(\\d{1})(\\d{2})");
-			return new TVShowEpisodeInfo( name, Integer.parseInt( episodeDetails[0]), Integer.parseInt( episodeDetails[1]), groups[2] );
-		}
-		
-		groups = RegExp.parseGroups(title, "(" + NAME_REGEXP + ")" + SEPARATOR_REGEXP + "(.*)" + SEPARATOR_REGEXP + "(\\d{4})$");
-		if (groups != null) {
-			String name = getName( groups[0] );
-			return new MovieInfo( name, Integer.parseInt( groups[2]), groups[1] );
-		}		
-
-		return null;
-
-	}
-	
-	public static VideoInfo getVideoInfo( Path path ) {
-		String fileNameWithoutExtension = path.getFileName().toString();
-		if (Files.isRegularFile( path )) {
-			fileNameWithoutExtension = fileNameWithoutExtension.substring(0, fileNameWithoutExtension.lastIndexOf('.'));
-		}
-		VideoInfo info = getVideoInfo( fileNameWithoutExtension );
-		if (info == null && Files.isRegularFile( path ) && path.getParent() != null) {
-			// sometimes the parent folder is correctly named
-			Path parent = path.getParent();
-			if (parent.getFileName() != null) { // I don't understand why this happens 
-				info = getVideoInfo( parent.getFileName().toString() );
-			}
-		}
-
-		if ( info != null && info.getName() != null ) {
-			info.setName( info.getName().trim() );
-		}
-		
 		return info;
 	}
 
@@ -147,38 +68,94 @@ public class VideoNameParser {
 		return name;
 	}
 
-	public static VideoQuality getQuality( String title ) {
-		VideoQuality quality = VideoQuality.findMatch( title );
-		return quality != null ? quality : VideoQuality.SD;
+	public static TVShowEpisodeInfo getEpisodeInfo( String tvshow, String title ) {
+
+        VideoQuality quality = null;
+        if (title.contains("1080")) {
+            title = title.replace("1080p", "");
+            title = title.replace("1080", "");
+            quality = VideoQuality._1080p;
+        }
+        if (title.contains("2160")) {
+            title = title.replace("2160p", "");
+            title = title.replace("2160", "");
+            quality = VideoQuality._2160p;
+        }
+        if (title.contains("x264")) {
+            title = title.replace("x264", "");
+        }
+
+        // remove year from title
+        title = title.replaceAll("19\\d{2}|20\\d{2}", "");
+
+        String [] patterns = new String[]{
+            "(.*)s(\\d{2})\\.?e(\\d{2})\\.?e(\\d{2})(.*)",
+            "(.*)s(\\d{2})\\.?e(\\d{2})(.*)",
+            "(.*)s(\\d{1,2})\\s+-\\s+(\\d{1,2})\\s+(.*)",
+            "(.*)(\\d+)x(\\d+)(.*)",
+            "(.*)(\\d{1})(\\d{2})(\\D{1}.*)",
+            "(.*)(\\d{2})e?(\\d{2})(.*)",
+            "(.*)\\.Part\\.(\\d+)\\.(.*)"
+        };
+
+        for (String pattern:patterns) {
+            String[] groups = RegExp.parseGroups(title, pattern);
+            if (groups != null) {
+                String name = getName( groups[0] );
+
+                name = StringUtils.isEmpty(name) ? tvshow : name;
+
+                if (groups.length == 3) {
+
+                    int firstEpisode = Integer.parseInt(groups[1]);
+                    int lastEpisode = firstEpisode;
+                    String extraNameData = groups[groups.length - 1];
+
+                    return new TVShowEpisodeInfo(tvshow != null ? tvshow : name, 1, firstEpisode, lastEpisode, quality, extraNameData);
+
+                } else {
+
+                    int extractedSeason = Integer.parseInt(groups[1]);
+                    int firstEpisode = Integer.parseInt(groups[2]);
+                    int lastEpisode = groups.length > 4 ? Integer.parseInt(groups[3]) : firstEpisode;
+                    String extraNameData = groups[groups.length - 1];
+
+                    return new TVShowEpisodeInfo(tvshow != null ? tvshow : name, extractedSeason, firstEpisode, lastEpisode, quality, extraNameData);
+                }
+            }
+        }
+
+        return null;
 	}
-	
-	public static MovieInfo getMovieInfo( String string ) {
 
-		string = clean( string, filters );
-		// this method is called when we know that the file is a Movie file
-		VideoInfo info = getVideoInfo( string );
-		if (info instanceof MovieInfo) {
-			return (MovieInfo) info;
-		}
-		return null;
+	public static MovieInfo getMovieInfo( String title ) {
 
-	}	
+        VideoQuality quality = null;
+        if (title.contains("1080")) {
+            title = title.replace("1080p", "");
+            title = title.replace("1080", "");
+            quality = VideoQuality._1080p;
+        }
+        if (title.contains("2160")) {
+            title = title.replace("2160p", "");
+            title = title.replace("2160", "");
+            quality = VideoQuality._2160p;
+        }
 
-	public static MovieInfo getMovieInfo(Path path) {
-		
-		// this method is called when we know that the file is a Movie file
+        String[] groups = RegExp.parseGroups(title, "(" + NAME_REGEXP + ")" + SEPARATOR_REGEXP + "\\(?(19\\d{2}|20\\d{2})\\)?(.*)");
+        if (groups != null) {
+            String name = getName( groups[0] );
+            return new MovieInfo( name, Integer.parseInt( groups[1]), quality, groups[2] );
+        }
 
-		VideoInfo info = getVideoInfo(path);
-		if (info instanceof MovieInfo) {
-			return (MovieInfo) info;
-		}
-
-		String fileNameWithoutExtension = path.getFileName().toString();
-		if (Files.isRegularFile( path )) {
-			fileNameWithoutExtension = fileNameWithoutExtension.substring(0, fileNameWithoutExtension.lastIndexOf('.'));			
-		}
-		String title = clean( fileNameWithoutExtension, filters );
-		return new MovieInfo( title, null );
+        return new MovieInfo( title, -1, null, null );
 	}
+
+    private static String getTitle(Path file) {
+        String filename = file.getFileName().toString();
+        String fileNameWithoutExtension = filename;
+        fileNameWithoutExtension = fileNameWithoutExtension.substring(0, fileNameWithoutExtension.lastIndexOf('.'));
+        return clean( fileNameWithoutExtension, filters );
+    }
 
 }

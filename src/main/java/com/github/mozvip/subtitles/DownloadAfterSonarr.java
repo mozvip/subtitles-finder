@@ -24,19 +24,15 @@ public class DownloadAfterSonarr {
         }
 
         String sonarr_eventtype = environment.get("sonarr_eventtype");
-        if (sonarr_eventtype == null || !"Download".equals(sonarr_eventtype)) {
-            System.exit(-1);
-        }
+        if (sonarr_eventtype != null && !"Grab".equals(sonarr_eventtype)) {
+            Path path = Paths.get(System.getenv("sonarr_episodefile_path"));
 
-        Path path = Paths.get( System.getenv("sonarr_episodefile_path") );
-
-        SubtitleDownloader downloader = new SubtitleDownloader();
-        try {
-            downloader.findSubtitlesFor(path, Locale.FRENCH);
-            System.exit(0);
-        } catch (Exception e) {
-            LOGGER.error(String.format("Unexpected error while downloading subtitles for %s", path.toAbsolutePath().toString()), e);
-            System.exit(-1);
+            SubtitleDownloader downloader = new SubtitleDownloader();
+            try {
+                downloader.findSubtitlesFor(path, Locale.FRENCH, true);
+            } catch (Exception e) {
+                LOGGER.error(String.format("Unexpected error while downloading subtitles for %s", path.toAbsolutePath().toString()), e);
+            }
         }
     }
 

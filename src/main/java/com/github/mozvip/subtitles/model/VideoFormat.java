@@ -2,6 +2,6 @@ package com.github.mozvip.subtitles.model;
 
 public enum VideoFormat {
 	
-	MP4
+	AVI, MKV, MP4
 
 }

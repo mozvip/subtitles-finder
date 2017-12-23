@@ -11,8 +11,12 @@ import org.apache.commons.lang3.StringUtils;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RegExp {
+
+	private final static Logger LOGGER = LoggerFactory.getLogger(RegExp.class);
 	
 	private static LoadingCache<String, Pattern> patterns = CacheBuilder.newBuilder()
 		       .build(
@@ -65,28 +69,14 @@ public class RegExp {
 		String[] groups = parseGroups(text, regex);
 		return groups != null ? groups[0] : null;
 	}
-	
-	public static String filter( String text, String regex ) {
-		String[] groups = parseGroups(text, regex);
-		return groups != null ? groups[0] : text;
-	}
-	
+
 	public static Pattern getPattern( String regex ) {
 		try {
 			return patterns.get(regex);
 		} catch (ExecutionException e) {
-			// bad boy
+			LOGGER.error(e.getMessage(), e);
+			return null;
 		}
-		return null;
 	}
-
-	public static boolean matches(String word, String regex) {
-		return matches( word, getPattern( regex ) );
-	}
-	
-	public static boolean matches( String word, Pattern pattern ) {
-		Matcher matcher = pattern.matcher( word );
-		return matcher.matches();
-	}	
 
 }
