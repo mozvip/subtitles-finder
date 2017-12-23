@@ -27,7 +27,7 @@ public class SubTitleFinderFactory {
                     }
                 }
                 for (Map.Entry<String, Method> entry:builderMethods.entrySet()) {
-                    String variableName = String.format("%s.%s", finderClass.getSimpleName(), entry.getKey());
+                    String variableName = String.format("%s_%s", finderClass.getSimpleName(), entry.getKey());
                     String env = System.getenv().get(variableName);
                     if (env != null) {
                         entry.getValue().invoke(builder, env);

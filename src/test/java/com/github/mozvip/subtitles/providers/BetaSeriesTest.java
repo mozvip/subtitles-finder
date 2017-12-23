@@ -19,8 +19,8 @@ public class BetaSeriesTest {
 
 	@BeforeClass
 	public static void init() throws Exception {
-		Assert.assertTrue(System.getenv("BetaSeries.login") != null);
-		Assert.assertTrue(System.getenv("BetaSeries.password") != null);
+		Assert.assertTrue(System.getenv("BetaSeries_login") != null);
+		Assert.assertTrue(System.getenv("BetaSeries_password") != null);
 		finder = SubTitleFinderFactory.createInstance(BetaSeries.class);
 	}
 
