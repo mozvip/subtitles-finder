@@ -65,7 +65,7 @@ public class VideoNameParser {
 		name = RegExp.keepOnlyGroups(name, "(.*)" + SEPARATOR_REGEXP + "bluray(.*)");
 		name = RegExp.keepOnlyGroups(name, "(.*)" + SEPARATOR_REGEXP + "french(.*)");
 		name = RegExp.keepOnlyGroups(name, "(.*)" + SEPARATOR_REGEXP + "x264(.*)");
-		return name;
+		return name.trim();
 	}
 
 	public static TVShowEpisodeInfo getEpisodeInfo( String tvshow, String title ) {
@@ -91,7 +91,7 @@ public class VideoNameParser {
         String [] patterns = new String[]{
             "(.*)s(\\d{2})\\.?e(\\d{2})\\.?e(\\d{2})(.*)",
             "(.*)s(\\d{2})\\.?e(\\d{2})(.*)",
-            "(.*)s(\\d{1,2})\\s+-\\s+(\\d{1,2})\\s+(.*)",
+            "(.*)(\\d{1,2})\\s+-\\s+(\\d{1,2})\\s+(.*)",
             "(.*)(\\d+)x(\\d+)(.*)",
             "(.*)(\\d{1})(\\d{2})(\\D{1}.*)",
             "(.*)(\\d{2})e?(\\d{2})(.*)",

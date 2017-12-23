@@ -32,6 +32,6 @@ public class DownloadForFolderTest {
 
     @Test
     public void main() throws IOException {
-        DownloadForFolder.main(  new String[]{"-f", videoPath.toAbsolutePath().toString(), "-l", "fr"} );
+        DownloadForFolder.main(  new String[]{"-f", videoPath.toAbsolutePath().toString(), "-l", "fr", "-o"} );
     }
 }
