@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+import java.util.regex.Pattern;
 
 import com.github.mozvip.subtitles.model.VideoSource;
 import org.apache.commons.lang3.StringUtils;
@@ -31,7 +32,7 @@ public class TVSubtitlesNet extends SubtitlesFinder implements EpisodeSubtitlesF
 	}
 
 	private void init() throws ExecutionException {
-		seriesMap = new HashMap<String, String>();
+		seriesMap = new HashMap<>();
 		Document tvShowsDocument = getDocument( "http://www.tvsubtitles.net/tvshows.html" );
 		Elements tvLinks = tvShowsDocument.select("#table5 a");
 		for ( Element link : tvLinks ) {
@@ -39,6 +40,8 @@ public class TVSubtitlesNet extends SubtitlesFinder implements EpisodeSubtitlesF
 			href = href.substring( href.indexOf("-") + 1, href.lastIndexOf("-"));
 			String seriesName = link.text().toLowerCase();
 			if (StringUtils.isNotBlank( seriesName )) {
+				seriesMap.put( seriesName, href );
+				seriesName = seriesName.replaceAll("\\s+\\(19\\d{2}|20\\d{2}\\)", "");
 				seriesMap.put( seriesName, href );
 			}
 		}
