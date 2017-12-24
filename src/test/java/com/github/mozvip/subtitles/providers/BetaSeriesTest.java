@@ -1,17 +1,14 @@
 package com.github.mozvip.subtitles.providers;
 
-import java.io.IOException;
-import java.util.Locale;
-import java.util.concurrent.ExecutionException;
-
+import com.github.mozvip.subtitles.RemoteSubTitles;
 import com.github.mozvip.subtitles.SubTitleFinderFactory;
 import com.github.mozvip.subtitles.model.VideoSource;
-import com.github.mozvip.subtitles.providers.BetaSeries;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.github.mozvip.subtitles.RemoteSubTitles;
+import java.util.Locale;
+import java.util.concurrent.ExecutionException;
 
 public class BetaSeriesTest {
 
