@@ -26,4 +26,10 @@ public class TVSubsTest {
 		Assert.assertTrue( remoteSubTitles.getTitle().contains(".FLEET."));
 	}
 
+	@Test
+	public void testDetroitersBR() throws ExecutionException {
+		RemoteSubTitles remoteSubTitles = tvs.downloadEpisodeSubtitle("Detroiters", 1, 6, "MOROSE", VideoSource.WEB_DL, Locale.forLanguageTag("br"));
+		Assert.assertTrue( remoteSubTitles.getTitle().contains("MOROSE"));
+	}
+
 }

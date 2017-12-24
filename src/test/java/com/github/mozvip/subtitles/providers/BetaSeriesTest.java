@@ -27,7 +27,7 @@ public class BetaSeriesTest {
 	@Test
 	public void testDownloadSubtitle() throws ExecutionException {
 		RemoteSubTitles subtitles = finder.downloadEpisodeSubtitle("Scream Queens (2015)", 2, 1, "AVS", VideoSource.HDTV, Locale.FRENCH);
-		Assert.assertTrue(subtitles.getTitle().contains("AVS"));
+        Assert.assertTrue(subtitles.getTitle().contains("AVS"));
 	}
 
 	@Test
