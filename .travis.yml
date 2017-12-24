@@ -1,4 +1,7 @@
 language: java
+
+script: "mvn cobertura:cobertura"
+
 jdk:
   - oraclejdk8
 install:
@@ -23,3 +26,6 @@ deploy:
       repo: $TRAVIS_REPO_SLUG
       tags: true
       jdk: oraclejdk8
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
