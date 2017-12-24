@@ -13,7 +13,7 @@ import com.github.mozvip.subtitles.SubTitlesZip;
 import com.github.mozvip.subtitles.SubtitlesFinder;
 import com.github.mozvip.subtitles.model.Release;
 
-public class ISubtitlesNet extends SubtitlesFinder implements MovieSubtitlesFinder {
+public class ISubtitlesIN extends SubtitlesFinder implements MovieSubtitlesFinder {
 	
 	public final static String BASE_URL = "https://isubtitles.in";
 

@@ -4,13 +4,12 @@ import java.math.BigDecimal;
 import java.util.Locale;
 
 import com.github.mozvip.subtitles.RemoteSubTitles;
-import com.github.mozvip.subtitles.providers.ISubtitlesNet;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class ISubtitlesNetTest {
+public class ISubtitlesINTest {
 	
-	private ISubtitlesNet test = new ISubtitlesNet();
+	private ISubtitlesIN test = new ISubtitlesIN();
 
 	@Test
 	public void testAquarius() throws Exception {
