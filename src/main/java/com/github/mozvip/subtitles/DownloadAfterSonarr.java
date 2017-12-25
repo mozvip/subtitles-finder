@@ -23,9 +23,16 @@ public class DownloadAfterSonarr {
             LOGGER.info("{}={}", entry.getKey(), entry.getValue());
         }
 
-        String sonarr_eventtype = environment.get("sonarr_eventtype");
-        if (sonarr_eventtype != null && !"Grab".equals(sonarr_eventtype)) {
-            Path path = Paths.get(System.getenv("sonarr_episodefile_path"));
+        String eventType = environment.get("sonarr_eventtype");
+        if (eventType == null) {
+            eventType = environment.get("radarr_eventtype");
+        }
+        if (eventType != null && !"Grab".equals(eventType)) {
+            String videoFilePath = environment.get("sonarr_episodefile_path");
+            if (videoFilePath == null) {
+                videoFilePath = environment.get("radarr_moviefile_path");
+            }
+            Path path = Paths.get(videoFilePath);
 
             SubtitleDownloader downloader = new SubtitleDownloader();
             try {
