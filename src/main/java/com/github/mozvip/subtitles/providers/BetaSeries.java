@@ -5,6 +5,7 @@ import java.net.URLEncoder;
 import java.util.Locale;
 import java.util.Scanner;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.MatchResult;
 
 import com.github.mozvip.subtitles.model.VideoSource;
@@ -52,14 +53,14 @@ public class BetaSeries extends SubtitlesFinder implements EpisodeSubtitlesFinde
         Document searchResults = null;
         try {
             searchResults = getDocument(String.format("http://www.betaseries.com/ajax/header/search.php?q=%s",
-                    URLEncoder.encode(showName, "UTF-8")));
+                    URLEncoder.encode(showName, "UTF-8")), null, 1, TimeUnit.DAYS);
         } catch (UnsupportedEncodingException e) {
             throw new ExecutionException(e);
         }
         Elements nodes = searchResults.select("item:contains(serie) > url");
 		for (Element node : nodes) {
 			String url = "http://www.betaseries.com/ajax/episodes/season.php?url=" + node.text() + "&saison=" + season;
-			Document document = getDocument(url);
+			Document document = getDocument(url, null, 1, TimeUnit.DAYS);
 			Elements elements = document.select(String.format("div[id*=%s%d%d]", node.text(), season, episode));
 			if (elements != null && elements.size() > 0) {
 				return elements.first();

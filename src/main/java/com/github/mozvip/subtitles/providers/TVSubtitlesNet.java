@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 import com.github.mozvip.subtitles.model.VideoSource;
@@ -33,7 +34,7 @@ public class TVSubtitlesNet extends SubtitlesFinder implements EpisodeSubtitlesF
 
 	private void init() throws ExecutionException {
 		seriesMap = new HashMap<>();
-		Document tvShowsDocument = getDocument( "http://www.tvsubtitles.net/tvshows.html" );
+		Document tvShowsDocument = getDocument( "http://www.tvsubtitles.net/tvshows.html", null, 1, TimeUnit.DAYS );
 		Elements tvLinks = tvShowsDocument.select("#table5 a");
 		for ( Element link : tvLinks ) {
 			String href = link.attr("href");
@@ -58,7 +59,7 @@ public class TVSubtitlesNet extends SubtitlesFinder implements EpisodeSubtitlesF
 		
 		String url = "http://www.tvsubtitles.net/tvshow-" + seriesMap.get( showName ) + "-" + season + ".html";
 		
-		Document document = getDocument( url );
+		Document document = getDocument( url, null, 1, TimeUnit.DAYS );
 		Elements rows = document.select("table#table5 tr");
 
 		int maxScore = -100;
@@ -74,7 +75,7 @@ public class TVSubtitlesNet extends SubtitlesFinder implements EpisodeSubtitlesF
 				continue;
 			}
 			subTitlesURL = row.select("a").first().absUrl("href");
-			document = getDocument( subTitlesURL );
+			document = getDocument( subTitlesURL, null, 1, TimeUnit.DAYS );
 			
 			Elements subtitles = document.select( String.format( "a:has(h5 img[src*=%s])", locale.getLanguage() ));
 			if (subtitles.isEmpty()) {
@@ -92,7 +93,7 @@ public class TVSubtitlesNet extends SubtitlesFinder implements EpisodeSubtitlesF
 		
 		if (selectedSubtitle != null) {
 			String href = selectedSubtitle.absUrl("href");
-			document = getDocument( href, url );
+			document = getDocument( href, url, 1, TimeUnit.DAYS );
 			String downloadURL = document.select("a:has(h3)").first().absUrl("href");
 			
 			byte[] bytes = getBytes( downloadURL, href );

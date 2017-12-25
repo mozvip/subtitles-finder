@@ -3,11 +3,9 @@ package com.github.mozvip.subtitles;
 import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommandGroupKey;
 import com.netflix.hystrix.HystrixCommandProperties;
-import okhttp3.JavaNetCookieJar;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
+import okhttp3.*;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
@@ -22,8 +20,12 @@ public class HttpRequestCommand extends HystrixCommand<Response> {
         CookieManager cookieManager = new CookieManager();
         cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
 
+        File directory = new File("cache");
+        Cache cache = new Cache(directory, 1024 * 1024 * 250);  // 250 MB
+
         client = new OkHttpClient.Builder()
                 .connectTimeout(30, TimeUnit.SECONDS)
+                .cache(cache)
                 .readTimeout(30, TimeUnit.SECONDS)
                 .cookieJar(new JavaNetCookieJar(cookieManager)).build();
     }

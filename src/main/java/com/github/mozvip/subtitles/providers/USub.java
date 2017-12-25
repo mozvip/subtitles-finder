@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 import com.github.mozvip.subtitles.model.VideoSource;
 import org.jsoup.nodes.Document;
@@ -35,7 +36,7 @@ public class USub extends SubtitlesFinder implements EpisodeSubtitlesFinder {
 	}
 	
 	private void init() throws ExecutionException {
-		indexPage = getDocument( "http://www.u-sub.net/sous-titres/" );
+		indexPage = getDocument( "http://www.u-sub.net/sous-titres/", null, 1, TimeUnit.DAYS );
 		Elements elements = indexPage.select("a[href*=/sous-titres/][title]");
 		
 		urls = new HashMap<String, String>();
@@ -58,7 +59,7 @@ public class USub extends SubtitlesFinder implements EpisodeSubtitlesFinder {
 		
 		url += "saison_" + season + "/";
 		
-		Document document = getDocument( url );
+		Document document = getDocument( url, null, 1, TimeUnit.DAYS );
 		Elements nodes = document.select( "#subtitles_list a.dl_link" );
 		
 		for( Element node : nodes ) {

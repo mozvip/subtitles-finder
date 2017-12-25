@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 import com.github.mozvip.subtitles.model.VideoSource;
 import org.jsoup.nodes.Document;
@@ -30,7 +31,7 @@ public class TVSubs extends SubtitlesFinder implements EpisodeSubtitlesFinder {
 	private Map<String, String> seriesMap = new HashMap<String, String>();
 	
 	public TVSubs() throws ExecutionException {
-		tvShowsDocument = getDocument(ROOT_URL + "tvshows.html");
+		tvShowsDocument = getDocument(ROOT_URL + "tvshows.html", null, 1, TimeUnit.DAYS);
 		Elements tvLinks = tvShowsDocument.select("ul.list1 a");
 		for (Element link : tvLinks) {
 			String href = link.attr("href");
@@ -55,7 +56,7 @@ public class TVSubs extends SubtitlesFinder implements EpisodeSubtitlesFinder {
 			return null;
 		}
 		String seasonURL = ROOT_URL + "tvshow-" + seriesId + "-" + season + ".html";
-		Document seasonDocument = getDocument(seasonURL);
+		Document seasonDocument = getDocument(seasonURL, null, 1, TimeUnit.DAYS);
 
 		Elements elements = seasonDocument.select( String.format( "ul.list1 li:contains(%02d)", episode) );
 		
@@ -80,7 +81,7 @@ public class TVSubs extends SubtitlesFinder implements EpisodeSubtitlesFinder {
 
 			} else {
 			
-				Document subTitlesPage = getDocument( subTitlesURL, seasonURL );
+				Document subTitlesPage = getDocument( subTitlesURL, seasonURL, 1, TimeUnit.DAYS );
 				Elements downloads = subTitlesPage.select("ul.list1 li" );
 				if (downloads != null && downloads.size() > 0) {
 					int currentScore = -1;
@@ -106,7 +107,7 @@ public class TVSubs extends SubtitlesFinder implements EpisodeSubtitlesFinder {
 		
 		RemoteSubTitles subTitles = null;
 		if (resultURL != null) {
-			Document downloadStagingPage = getDocument(resultURL, refererURL);
+			Document downloadStagingPage = getDocument(resultURL, refererURL, 1, TimeUnit.DAYS);
 			
 			String url = "";
 			

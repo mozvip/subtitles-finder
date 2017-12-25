@@ -2,6 +2,7 @@ package com.github.mozvip.subtitles.providers;
 
 import java.math.BigDecimal;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -29,7 +30,7 @@ public class ISubtitlesIN extends SubtitlesFinder implements MovieSubtitlesFinde
 		
 		String url = String.format("%s/search?kwd=%s+%d", BASE_URL, movieName, year);
 		
-		Document document = getDocument(url);
+		Document document = getDocument(url, null, 1, TimeUnit.DAYS);
 		Elements movieLinks = document.select(".movie-list-info .row a");
 		if (movieLinks.size() == 0) {
 			return null;
@@ -37,7 +38,7 @@ public class ISubtitlesIN extends SubtitlesFinder implements MovieSubtitlesFinde
 		Element movieLink = movieLinks.first();
 		
 		String movieUrl = movieLink.absUrl("href");
-		document = getDocument( movieUrl, url );
+		document = getDocument( movieUrl, url, 1, TimeUnit.DAYS );
 		
 		Elements rows = document.select( String.format( "tr:has(td:contains(%s))", locale.getDisplayLanguage() ));
 		for (Element row : rows) {

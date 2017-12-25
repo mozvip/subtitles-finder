@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 import com.github.mozvip.subtitles.model.VideoSource;
 import org.apache.commons.lang3.StringUtils;
@@ -70,7 +71,7 @@ public class Podnapisi extends SubtitlesFinder implements EpisodeSubtitlesFinder
 	}
 
 	private RemoteSubTitles extractSubtitles(String release, VideoSource source, Locale locale, String url) throws ExecutionException {
-		Document document = getDocument(url);
+		Document document = getDocument(url, null, 1, TimeUnit.DAYS);
 
 		String href = null;
 

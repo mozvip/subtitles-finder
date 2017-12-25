@@ -15,16 +15,11 @@ import com.github.mozvip.subtitles.model.VideoSource;
 import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommandGroupKey;
 import com.netflix.hystrix.HystrixCommandProperties;
+import okhttp3.*;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
-import okhttp3.FormBody;
-import okhttp3.HttpUrl;
-import okhttp3.JavaNetCookieJar;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,12 +38,12 @@ public abstract class SubtitlesFinder {
 	}
 
 	public Document getDocument(String url) throws ExecutionException {
-		return getDocument(url, null);
+		return getDocument(url, null, 0, null);
 	}
 
-	public Document getDocument(String url, String refererUrl) throws ExecutionException {
+	public Document getDocument(String url, String refererUrl, int maxStale, TimeUnit timeUnit) throws ExecutionException {
         try {
-            Response response = get(url, refererUrl).get();
+            Response response = get(url, refererUrl, maxStale, timeUnit).get();
             return Jsoup.parse(response.body().string(), url);
         } catch (Exception e) {
             throw new ExecutionException(e);
@@ -57,7 +52,7 @@ public abstract class SubtitlesFinder {
 
 	public byte[] getBytes(String url, String refererUrl) throws ExecutionException {
 	    try {
-            Response response = get(url, refererUrl).get();
+            Response response = get(url, refererUrl, 1, TimeUnit.DAYS).get();
             if (response.code() >= 400) {
                 throw new IOException("HTTP request failed");
             }
@@ -103,7 +98,16 @@ public abstract class SubtitlesFinder {
 	}
 
 	protected Future<Response> get(String url, String refererUrl) {
+		return get(url, refererUrl, 0, null);
+	}
+
+	protected Future<Response> get(String url, String refererUrl, int maxStale, TimeUnit timeUnit) {
 		Request.Builder builder = getRequestBuilder(url, refererUrl);
+		if (maxStale > 0) {
+			builder.cacheControl(new CacheControl.Builder()
+					.maxStale(maxStale, timeUnit)
+					.build());
+		}
 		Request request = builder.build();
         return new HttpRequestCommand(request).queue();
 	}

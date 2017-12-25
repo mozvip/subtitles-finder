@@ -7,6 +7,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.MatchResult;
 
 import com.github.mozvip.subtitles.model.VideoSource;
@@ -53,7 +54,7 @@ public class Addic7ed extends SubtitlesFinder implements EpisodeSubtitlesFinder 
 		try {
 			
 			String episodeLookupURL = "http://www.addic7ed.com/re_episode.php?ep=" + showId + "-" + season + "x" + episode;
-			Response response = get( episodeLookupURL, null ).get();
+			Response response = get( episodeLookupURL, null, 1, TimeUnit.DAYS ).get();
 			
 			String episodeUrl = response.request().url().toString();
 			
@@ -139,7 +140,7 @@ public class Addic7ed extends SubtitlesFinder implements EpisodeSubtitlesFinder 
 	}
 	
 	private void init() throws ExecutionException {
-		Document document = getDocument( "http://www.addic7ed.com/shows.php" );
+		Document document = getDocument( "http://www.addic7ed.com/shows.php", null, 1, TimeUnit.DAYS );
 		Elements showLinks = document.select( "h3 > a" );
 		for ( Element showLink : showLinks ) {
 			String show = showLink.text();

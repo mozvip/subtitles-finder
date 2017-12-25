@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -49,7 +50,7 @@ public class SousTitresEU extends SubtitlesFinder implements EpisodeSubtitlesFin
 			url = ROOT_URL + "/series/" + url + ".html";
 		}
 
-		Document document = getDocument(url);
+		Document document = getDocument(url, null, 1, TimeUnit.DAYS);
 		if (document == null) {
 			LOGGER.warn(String.format("Couldn't find show %s", showName));
 			return null;
@@ -127,7 +128,7 @@ public class SousTitresEU extends SubtitlesFinder implements EpisodeSubtitlesFin
 
 		String url = String.format("%s/search.html?q=%s+%d", ROOT_URL, movieName, year);
 
-		Document document = getDocument(url);
+		Document document = getDocument(url, null, 1, TimeUnit.DAYS);
 		if (document == null) {
 			return null;
 		}
