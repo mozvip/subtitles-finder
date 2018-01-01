@@ -53,9 +53,6 @@ public abstract class SubtitlesFinder {
 	public byte[] getBytes(String url, String refererUrl) throws ExecutionException {
 	    try {
             Response response = get(url, refererUrl, 1, TimeUnit.DAYS).get();
-            if (response.code() >= 400) {
-                throw new IOException("HTTP request failed");
-            }
             return response.body().bytes();
         } catch (Exception e) {
             throw new ExecutionException(e);

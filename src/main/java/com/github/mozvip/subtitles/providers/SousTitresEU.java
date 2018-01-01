@@ -9,7 +9,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.github.mozvip.subtitles.model.VideoSource;
+import okhttp3.Response;
 import org.apache.commons.lang3.StringUtils;
+import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -50,15 +52,23 @@ public class SousTitresEU extends SubtitlesFinder implements EpisodeSubtitlesFin
 			url = ROOT_URL + "/series/" + url + ".html";
 		}
 
-		Document document = getDocument(url, null, 1, TimeUnit.DAYS);
-		if (document == null) {
-			LOGGER.warn(String.format("Couldn't find show %s", showName));
+		Document document;
+		Elements nodes;
+		RemoteSubTitles bestSubTitles;
+		try (Response response = get(url, null, 1, TimeUnit.DAYS).get()) {
+			if (response.code() == 404) {
+				LOGGER.warn(String.format("Couldn't find show %s", showName));
+				return null;
+			}
+			document = Jsoup.parse(response.body().string(), url);
+		} catch (InterruptedException | IOException e) {
+			LOGGER.error(e.getMessage(), e);
 			return null;
 		}
 
-		Elements nodes = document.select("a > span.episodenum");
+		nodes = document.select("a > span.episodenum");
 
-		RemoteSubTitles bestSubTitles = null;
+		bestSubTitles = null;
 
 		for (Element node : nodes) {
 
@@ -87,7 +97,7 @@ public class SousTitresEU extends SubtitlesFinder implements EpisodeSubtitlesFin
 			if (SubTitlesUtils.isExactMatch(text, season, episode)) {
 
 				byte[] bytes = getBytes(href, url);
-				RemoteSubTitles currentRemoteSubTitles = null;
+				RemoteSubTitles currentRemoteSubTitles;
 				try {
 					currentRemoteSubTitles = SubTitlesZip.selectBestSubtitles(this, bytes, release, locale);
 				} catch (IOException e) {

@@ -55,4 +55,16 @@ public class SousTitresEUTest extends AbstractSubtitleFinderTest {
 		Assert.assertTrue( remoteSubTitles == null);
 	}
 
+	@Test
+	public void testShowNotFound() throws Exception {
+		RemoteSubTitles remoteSubTitles = finder.downloadEpisodeSubtitle("thisshowdoesnotexist", 1, 1, "IMMERSE", VideoSource.HDTV, Locale.FRENCH);
+		Assert.assertTrue( remoteSubTitles == null);
+	}
+
+	@Test
+	public void testUnsupportedLanguage() throws Exception {
+		RemoteSubTitles remoteSubTitles = finder.downloadEpisodeSubtitle("Game of Thrones", 2, 1, "IMMERSE", VideoSource.HDTV, Locale.CHINESE);
+		Assert.assertTrue( remoteSubTitles == null);
+	}
+
 }
