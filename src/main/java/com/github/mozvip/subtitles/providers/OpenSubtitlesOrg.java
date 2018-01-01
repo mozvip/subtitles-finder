@@ -21,7 +21,7 @@ public class OpenSubtitlesOrg extends SubtitlesFinder implements FileHashSubtitl
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(OpenSubtitlesOrg.class);
 
-	private XmlRpcClient xmlRPCClient = null;
+	private XmlRpcClient xmlRPCClient;
 
 	public OpenSubtitlesOrg() throws MalformedURLException {
 		String url = "http://api.opensubtitles.org/xml-rpc";
@@ -31,41 +31,9 @@ public class OpenSubtitlesOrg extends SubtitlesFinder implements FileHashSubtitl
 		xmlRPCClient.setConfig(config);
 	}
 
-	public enum OsLanguage {
-		ENG("en", "eng"), FRE("fr", "fre");
-
-		private String language;
-		private String idSubLanguage;
-
-		private OsLanguage(String language, String idSubLanguage) {
-			this.language = language;
-			this.idSubLanguage = idSubLanguage;
-		}
-
-		public String getIdSubLanguage() {
-			return idSubLanguage;
-		}
-
-		public static OsLanguage find(String language) {
-			for (OsLanguage osLang : OsLanguage.values()) {
-				if (osLang.language == language) {
-					return osLang;
-				}
-			}
-			return null;
-		}
-	}
-
 	@Override
 	public RemoteSubTitles downloadSubtitlesForFileHash(String fileHash, long videoByteSize, Locale locale)
 			throws Exception {
-
-		OsLanguage lang = OsLanguage.find(locale.getLanguage());
-		if (lang == null) {
-			LOGGER.warn(String.format("Language %s is not supported by the opensubtitles.org subtitles finder",
-					locale.getLanguage()));
-			return null;
-		}
 
 		String userAgent = "TemporaryUserAgent";
 
@@ -76,7 +44,7 @@ public class OpenSubtitlesOrg extends SubtitlesFinder implements FileHashSubtitl
 
 			Map<String, String> sub = new HashMap<String, String>();
 
-			sub.put("sublanguageid", lang.getIdSubLanguage());
+			sub.put("sublanguageid", locale.getISO3Language());
 			sub.put("moviehash", fileHash);
 			sub.put("moviebytesize", "" + videoByteSize);
 

@@ -50,7 +50,7 @@ public class BetaSeries extends SubtitlesFinder implements EpisodeSubtitlesFinde
 	public Element getEpisodeElement(String showName, int season, int episode)
 			throws ExecutionException {
 
-        Document searchResults = null;
+        Document searchResults;
         try {
             searchResults = getDocument(String.format("http://www.betaseries.com/ajax/header/search.php?q=%s",
                     URLEncoder.encode(showName, "UTF-8")), null, 1, TimeUnit.DAYS);

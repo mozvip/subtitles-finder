@@ -1,6 +1,6 @@
 <component name="ArtifactManager">
   <artifact type="jar" build-on-make="true" name="subtitles-finder:jar">
-    <output-path>$PROJECT_DIR$/out/artifacts/subtitles_finder_jar</output-path>
+    <output-path>$PROJECT_DIR$/out/</output-path>
     <root id="archive" name="subtitles-finder.jar">
       <element id="module-output" name="subtitles-finder" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/commons-io/commons-io/2.5/commons-io-2.5.jar" path-in-jar="/" />

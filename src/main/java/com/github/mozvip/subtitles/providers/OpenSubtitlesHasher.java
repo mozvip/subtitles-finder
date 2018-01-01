@@ -17,9 +17,7 @@ import java.util.concurrent.Semaphore;
  * overlap because the file is smaller than 128k).
  */
 public class OpenSubtitlesHasher {
-	
-	private static Semaphore semaphore = new Semaphore(1);
-	
+
 	private OpenSubtitlesHasher() {}
 
 	/**
@@ -28,22 +26,16 @@ public class OpenSubtitlesHasher {
 	private static final int HASH_CHUNK_SIZE = 64 * 1024;
 
 	public static String computeHash( Path path) throws IOException, InterruptedException {
-		
-		semaphore.acquire();
-		try {
-			long size = Files.size( path );
-			long chunkSizeForFile = Math.min(HASH_CHUNK_SIZE, size);
-	
-			try (FileInputStream input = new FileInputStream( path.toFile() )) {
-				try (FileChannel fileChannel = input.getChannel()) {
-					long head = computeHashForChunk(fileChannel.map(MapMode.READ_ONLY, 0, chunkSizeForFile));
-					long tail = computeHashForChunk(fileChannel.map(MapMode.READ_ONLY, Math.max(size - HASH_CHUNK_SIZE, 0), chunkSizeForFile));
-	
-					return String.format("%016x", size + head + tail);
-				}
+		long size = Files.size( path );
+		long chunkSizeForFile = Math.min(HASH_CHUNK_SIZE, size);
+
+		try (FileInputStream input = new FileInputStream( path.toFile() )) {
+			try (FileChannel fileChannel = input.getChannel()) {
+				long head = computeHashForChunk(fileChannel.map(MapMode.READ_ONLY, 0, chunkSizeForFile));
+				long tail = computeHashForChunk(fileChannel.map(MapMode.READ_ONLY, Math.max(size - HASH_CHUNK_SIZE, 0), chunkSizeForFile));
+
+				return String.format("%016x", size + head + tail);
 			}
-		} finally {
-			semaphore.release();
 		}
 	}
 

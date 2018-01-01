@@ -8,18 +8,25 @@ import java.util.Map;
 
 public class SubTitleFinderFactory {
 
-    public static <T> T createInstance(Class<? extends T> finderClass) throws InvocationTargetException, IllegalAccessException, InstantiationException {
+    private static Map<String, String> env = System.getenv();
+
+    public static void setEnv(Map<String, String> env) {
+        SubTitleFinderFactory.env = env;
+    }
+
+    public static <T> T createInstance(Class<? extends T> finderClass) throws InvocationTargetException, IllegalAccessException, InstantiationException, NoSuchMethodException {
+
         Class<?>[] internalClasses = finderClass.getClasses();
         for (Class<?> class1 : internalClasses) {
             if (class1.getSimpleName().equals("Builder") && Modifier.isStatic(class1.getModifiers())) {
 
-                Object builder = class1.newInstance();
+                Object builder = class1.getDeclaredConstructor().newInstance();
 
                 Map<String, Method> builderMethods = new HashMap<>();
                 Method buildMethod = null;
                 Method[] methods = class1.getMethods();
                 for (Method method: methods) {
-                    if (method.getReturnType().equals(class1)) {
+                    if (method.getReturnType().equals(class1) && method.getParameterCount() == 1) {
                         // this method returns the builder class
                         builderMethods.put(method.getName(), method);
                     } else if (method.getReturnType().equals(finderClass)) {
@@ -28,15 +35,14 @@ public class SubTitleFinderFactory {
                 }
                 for (Map.Entry<String, Method> entry:builderMethods.entrySet()) {
                     String variableName = String.format("%s_%s", finderClass.getSimpleName(), entry.getKey());
-                    String env = System.getenv().get(variableName);
-                    if (env != null) {
-                        entry.getValue().invoke(builder, env);
+                    if (env.containsKey(variableName)) {
+                        entry.getValue().invoke(builder, env.get(variableName));
                     }
                 }
-                return (T) buildMethod.invoke(builder, null);
+                return (T) buildMethod.invoke(builder, (Object[]) null);
             }
         }
-        return finderClass.newInstance();
+        return finderClass.getDeclaredConstructor().newInstance();
     }
 
 }
