@@ -14,14 +14,20 @@ public class DownloadAfterSonarr {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(DownloadAfterSonarr.class);
 
-    public static void main(String[] args) {
+    private Map<String, String> environment;
 
-        Map<String, String> environment = System.getenv();
+    public DownloadAfterSonarr(Map<String, String> environment) {
+
+        this.environment = environment;
 
         LOGGER.info("======== Environment Variables");
-        for (Map.Entry<String, String> entry:environment.entrySet()) {
+        for (Map.Entry<String, String> entry : environment.entrySet()) {
             LOGGER.info("{}={}", entry.getKey(), entry.getValue());
         }
+
+    }
+
+    public void download() {
 
         String eventType = environment.get("sonarr_eventtype");
         if (eventType == null) {
@@ -41,6 +47,15 @@ public class DownloadAfterSonarr {
                 LOGGER.error(String.format("Unexpected error while downloading subtitles for %s", path.toAbsolutePath().toString()), e);
             }
         }
+
+    }
+
+    public static void main(String[] args) {
+
+        Map<String, String> environment = System.getenv();
+        DownloadAfterSonarr downloader = new DownloadAfterSonarr( environment );
+        downloader.download();
+
     }
 
 }
