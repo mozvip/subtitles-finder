@@ -139,9 +139,6 @@ public class SousTitresEU extends SubtitlesFinder implements EpisodeSubtitlesFin
 		String url = String.format("%s/search.html?q=%s+%d", ROOT_URL, movieName, year);
 
 		Document document = getDocument(url, null, 1, TimeUnit.DAYS);
-		if (document == null) {
-			return null;
-		}
 
 		Elements nodes = document.select("li.exact > a > span.episodenum");
 

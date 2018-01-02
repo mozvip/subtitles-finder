@@ -9,10 +9,11 @@ public class VideoInfo {
 	
 	private String extraNameData;
 
-	public VideoInfo( String name, VideoQuality quality, String extraNameData ) {
+	public VideoInfo( String name, VideoQuality quality, VideoSource source, String extraNameData ) {
 		super();
 		this.name = name;
 		this.quality = quality;
+		this.source = source;
 		this.extraNameData = extraNameData;
 		parseExtraData();
 	}

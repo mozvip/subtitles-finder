@@ -10,16 +10,12 @@ public class TVShowEpisodeInfo extends VideoInfo {
 	private int firstEpisode;
 	private int lastEpisode;
 
-	public TVShowEpisodeInfo(String name, int season, int firstEpisode, int lastEpisode, VideoQuality quality, String extraNameData ) {
-		super(name, quality, extraNameData);
+	public TVShowEpisodeInfo(String name, int season, int firstEpisode, int lastEpisode, VideoQuality quality, VideoSource source, String extraNameData ) {
+		super(name, quality, source, extraNameData);
 		this.season = season;
 		this.firstEpisode = firstEpisode;
 		this.lastEpisode = lastEpisode;
 	}
-	
-	public TVShowEpisodeInfo(String name, int season, int episode, VideoQuality quality, String extraNameData ) {
-		this(name, season, episode, episode, quality, extraNameData);
-	}	
 
 	public int getSeason() {
 		return season;

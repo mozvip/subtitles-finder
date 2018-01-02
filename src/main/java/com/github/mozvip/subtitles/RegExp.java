@@ -32,32 +32,28 @@ public class RegExp {
 
 	public static String[] parseGroups( String text, String regex ) {
 		
-		if (text != null) {
-		
-			text = text.replace('\n', ' ');
-			
-			Pattern pattern = getPattern( regex );
-			Matcher matcher = pattern.matcher( text );
-			
-			List<String> collection = new ArrayList<String>();
-			if (matcher.matches()) {
-				int count = matcher.groupCount();
-				for (int i=1;i<=count; i++) {
-					collection.add( matcher.group(i));
-				}
+		text = text.replace('\n', ' ');
+
+		Pattern pattern = getPattern( regex );
+		Matcher matcher = pattern.matcher( text );
+
+		List<String> collection = new ArrayList<String>();
+		if (matcher.matches()) {
+			int count = matcher.groupCount();
+			for (int i=1;i<=count; i++) {
+				collection.add( matcher.group(i));
 			}
-			
-			if (!collection.isEmpty()) {
-				return (String[]) collection.toArray(new String[collection.size()]);
-			}
-			
 		}
-		
+
+		if (!collection.isEmpty()) {
+			return collection.toArray(new String[collection.size()]);
+		}
+
 		return null;
 	}
 	
 	public static String keepOnlyGroups( String text, String regex) {
-		String[] groups = RegExp.parseGroups( text,  regex );
+		String[] groups = parseGroups( text,  regex );
 		String result = text;
 		if (groups != null) {
 			result = StringUtils.join( groups, " ");

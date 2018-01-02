@@ -98,6 +98,8 @@ public class VideoNameParser {
             "(.*)\\.Part\\.(\\d+)\\.(.*)"
         };
 
+        VideoSource source = VideoSource.findMatch(title);
+
         for (String pattern:patterns) {
             String[] groups = RegExp.parseGroups(title, pattern);
             if (groups != null) {
@@ -111,7 +113,7 @@ public class VideoNameParser {
                     int lastEpisode = firstEpisode;
                     String extraNameData = groups[groups.length - 1];
 
-                    return new TVShowEpisodeInfo(tvshow != null ? tvshow : name, 1, firstEpisode, lastEpisode, quality, extraNameData);
+                    return new TVShowEpisodeInfo(tvshow != null ? tvshow : name, 1, firstEpisode, lastEpisode, quality, source, extraNameData);
 
                 } else {
 
@@ -120,7 +122,7 @@ public class VideoNameParser {
                     int lastEpisode = groups.length > 4 ? Integer.parseInt(groups[3]) : firstEpisode;
                     String extraNameData = groups[groups.length - 1];
 
-                    return new TVShowEpisodeInfo(tvshow != null ? tvshow : name, extractedSeason, firstEpisode, lastEpisode, quality, extraNameData);
+                    return new TVShowEpisodeInfo(tvshow != null ? tvshow : name, extractedSeason, firstEpisode, lastEpisode, quality, source, extraNameData);
                 }
             }
         }
@@ -142,13 +144,15 @@ public class VideoNameParser {
             quality = VideoQuality._2160p;
         }
 
+        VideoSource source = VideoSource.findMatch(title);
+
         String[] groups = RegExp.parseGroups(title, "(" + NAME_REGEXP + ")" + SEPARATOR_REGEXP + "\\(?(19\\d{2}|20\\d{2})\\)?(.*)");
         if (groups != null) {
             String name = getName( groups[0] );
-            return new MovieInfo( name, Integer.parseInt( groups[1]), quality, groups[2] );
+            return new MovieInfo( name, Integer.parseInt( groups[1]), quality, source, groups[2] );
         }
 
-        return new MovieInfo( title, -1, null, null );
+        return new MovieInfo( title, -1, null, source, null );
 	}
 
     private static String getTitle(Path file) {
