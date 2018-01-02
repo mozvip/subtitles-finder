@@ -1,5 +1,5 @@
 package com.github.mozvip.subtitles;
 
-public class AbstractSubtitleFinderTest {
+public abstract class AbstractSubtitleFinderTest {
 
 }

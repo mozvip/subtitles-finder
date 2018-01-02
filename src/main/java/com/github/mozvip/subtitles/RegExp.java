@@ -5,7 +5,9 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
+import com.google.common.util.concurrent.UncheckedExecutionException;
 import org.apache.commons.lang3.StringUtils;
 
 import com.google.common.cache.CacheBuilder;
@@ -66,12 +68,11 @@ public class RegExp {
 		return groups != null ? groups[0] : null;
 	}
 
-	public static Pattern getPattern( String regex ) {
+	public static Pattern getPattern( String regex ) throws PatternSyntaxException {
 		try {
-			return patterns.get(regex);
-		} catch (ExecutionException e) {
-			LOGGER.error(e.getMessage(), e);
-			return null;
+			return patterns.getUnchecked(regex);
+		} catch (UncheckedExecutionException e) {
+			throw (PatternSyntaxException) e.getCause();
 		}
 	}
 

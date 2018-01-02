@@ -39,6 +39,9 @@ public class SubTitleFinderFactory {
                         entry.getValue().invoke(builder, env.get(variableName));
                     }
                 }
+                if (buildMethod == null) {
+                    throw new NoSuchMethodException("No elligible build method was found on the Builder class");
+                }
                 return (T) buildMethod.invoke(builder, (Object[]) null);
             }
         }
