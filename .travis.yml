@@ -1,6 +1,11 @@
 language: java
 
-script: "mvn cobertura:cobertura"
+addons:
+  sonarcloud:
+    organization: "mozvip-github"
+
+script:
+  mvn cobertura:cobertura sonar:sonar
 
 jdk:
   - oraclejdk8
