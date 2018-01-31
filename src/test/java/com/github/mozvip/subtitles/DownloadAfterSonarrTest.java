@@ -14,7 +14,7 @@ import static org.junit.Assert.*;
 public class DownloadAfterSonarrTest {
 
     @Test
-    public void testDownload() throws URISyntaxException {
+    public void testDownload() throws Exception {
         URL resource = getClass().getResource("/video_folder/Feud.S01E08.PROPER.720p.HDTV.x264-KILLERS[eztv].mkv");
         Path path = Paths.get(resource.toURI());
 

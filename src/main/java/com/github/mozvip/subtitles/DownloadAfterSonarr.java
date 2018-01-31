@@ -1,6 +1,5 @@
 package com.github.mozvip.subtitles;
 
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -8,7 +7,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 
 public class DownloadAfterSonarr {
 
@@ -27,7 +25,7 @@ public class DownloadAfterSonarr {
 
     }
 
-    public void download() {
+    public void download() throws Exception {
 
         String eventType = environment.get("sonarr_eventtype");
         if (eventType == null) {
@@ -41,21 +39,13 @@ public class DownloadAfterSonarr {
             Path path = Paths.get(videoFilePath);
 
             SubtitleDownloader downloader = new SubtitleDownloader();
-            try {
-                downloader.findSubtitlesFor(path, Locale.FRENCH, true);
-            } catch (Exception e) {
-                LOGGER.error(String.format("Unexpected error while downloading subtitles for %s", path.toAbsolutePath().toString()), e);
-            }
+            downloader.findSubtitlesFor(path, Locale.FRENCH, true);
         }
 
     }
 
-    public static void main(String[] args) {
-
-        Map<String, String> environment = System.getenv();
-        DownloadAfterSonarr downloader = new DownloadAfterSonarr( environment );
-        downloader.download();
-
+    public static void main(String[] args) throws Exception {
+        new DownloadAfterSonarr( System.getenv() ).download();
     }
 
 }

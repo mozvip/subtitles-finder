@@ -19,6 +19,8 @@ import com.github.mozvip.subtitles.model.Release;
 public class SubTitlesZip {
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger( SubTitlesZip.class );
+
+	private SubTitlesZip() {}
 	
 	public static int evaluateScore( String subtitleName, Locale locale, String release ) {
 		

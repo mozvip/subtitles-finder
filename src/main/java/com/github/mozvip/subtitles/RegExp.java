@@ -54,21 +54,12 @@ public class RegExp {
 		return null;
 	}
 	
-	public static String keepOnlyGroups( String text, String regex) {
-		String[] groups = parseGroups( text,  regex );
-		String result = text;
-		if (groups != null) {
-			result = StringUtils.join( groups, " ");
-		}
-		return result;
-	}
-	
 	public static String extract( String text, String regex ) {
 		String[] groups = parseGroups(text, regex);
 		return groups != null ? groups[0] : null;
 	}
 
-	public static Pattern getPattern( String regex ) throws PatternSyntaxException {
+	public static Pattern getPattern( String regex ) {
 		try {
 			return patterns.getUnchecked(regex);
 		} catch (UncheckedExecutionException e) {

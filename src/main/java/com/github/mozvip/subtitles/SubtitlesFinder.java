@@ -59,10 +59,6 @@ public abstract class SubtitlesFinder {
         }
 	}
 
-	protected void submit(Element formElement, String... params) {
-		post(formElement.absUrl("action"), formElement.baseUri(), params);
-	}
-
 	public Future<Response> post(String url, String refererUrl, String... params) {
 		FormBody.Builder formBodyBuilder = new FormBody.Builder();
 		for (String param : params) {

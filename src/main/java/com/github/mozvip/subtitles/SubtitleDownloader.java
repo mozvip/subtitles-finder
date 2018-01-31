@@ -53,7 +53,11 @@ public class SubtitleDownloader {
 
         for (Class<? extends FileHashSubtitlesFinder> finderClass : fileHashSubtitlesFinders) {
             LOGGER.info("== Searching with {}", finderClass.getName());
-            currentSubTitles = SubTitleFinderFactory.createInstance(finderClass).downloadSubtitlesForFileHash(fileHash, videoByteSize, locale);
+            try {
+                currentSubTitles = SubTitleFinderFactory.createInstance(finderClass).downloadSubtitlesForFileHash(fileHash, videoByteSize, locale);
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage(), e);
+            }
         }
 
         if (currentSubTitles == null) {
@@ -71,11 +75,9 @@ public class SubtitleDownloader {
                     try {
                         LOGGER.info("== Searching with {}", finderClass.getName());
                         RemoteSubTitles subTitles = SubTitleFinderFactory.createInstance(finderClass).downloadEpisodeSubtitle(episodeInfo.getName(), episodeInfo.getSeason(), episodeInfo.getFirstEpisode(), episodeInfo.getRelease(), episodeInfo.getSource(), locale);
-                        if (subTitles != null) {
-                            if (subTitles.getScore() > currentScore) {
-                                currentScore = subTitles.getScore();
-                                currentSubTitles = subTitles;
-                            }
+                        if (subTitles != null && subTitles.getScore() > currentScore) {
+                            currentScore = subTitles.getScore();
+                            currentSubTitles = subTitles;
                         }
                     } catch (Exception e) {
                         LOGGER.error(e.getMessage(), e);
@@ -90,12 +92,10 @@ public class SubtitleDownloader {
 
                 int currentScore = 0;
                 for (Class<? extends MovieSubtitlesFinder> finderClass : movieSubtitlesFinders) {
-                    RemoteSubTitles subTitles = SubTitleFinderFactory.createInstance( finderClass).downloadMovieSubtitles(movieInfo.getName(), movieInfo.getYear(), movieInfo.getRelease(), fps, locale);
-                    if (subTitles != null) {
-                        if (subTitles.getScore() > currentScore) {
-                            currentScore = subTitles.getScore();
-                            currentSubTitles = subTitles;
-                        }
+                    RemoteSubTitles subTitles = SubTitleFinderFactory.createInstance(finderClass).downloadMovieSubtitles(movieInfo.getName(), movieInfo.getYear(), movieInfo.getRelease(), fps, locale);
+                    if (subTitles != null && subTitles.getScore() > currentScore) {
+                        currentScore = subTitles.getScore();
+                        currentSubTitles = subTitles;
                     }
                 }
             }

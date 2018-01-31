@@ -43,17 +43,14 @@ public class VideoNameParser {
 
     public static VideoInfo getVideoInfo( Path path ) {
 	    String title = getTitle(path);
-	    VideoInfo info = getVideoInfo(title);
-        return info != null ? info : getVideoInfo((path.getParent()));
+	    return getVideoInfo(title);
     }
 
 	public static VideoInfo getVideoInfo( String title ) {
-
         VideoInfo info = getEpisodeInfo(null, title);
         if (info == null) {
             info = getMovieInfo(title);
 		}
-
 		return info;
 	}
 
@@ -61,10 +58,7 @@ public class VideoNameParser {
 		String name = string;
 		name = name.replace('.', ' ');
 		name = name.replace('_', ' ');
-		
-		name = RegExp.keepOnlyGroups(name, "(.*)" + SEPARATOR_REGEXP + "bluray(.*)");
-		name = RegExp.keepOnlyGroups(name, "(.*)" + SEPARATOR_REGEXP + "french(.*)");
-		name = RegExp.keepOnlyGroups(name, "(.*)" + SEPARATOR_REGEXP + "x264(.*)");
+
 		return name.trim();
 	}
 

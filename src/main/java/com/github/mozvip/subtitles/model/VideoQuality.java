@@ -11,7 +11,7 @@ public enum VideoQuality {
 	
 	private String[] identifiers;
 	
-	private VideoQuality(String[] identifiers) {
+	VideoQuality(String[] identifiers) {
 		this.identifiers = identifiers;
 	}
 

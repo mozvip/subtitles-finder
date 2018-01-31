@@ -6,6 +6,8 @@ import java.util.List;
 
 
 public class SubTitlesUtils {
+
+	private SubTitlesUtils() {}
 	
 	public static List<String> getSeasonEpisodeMatchList( int season, int episode ) {
 		
@@ -35,42 +37,18 @@ public class SubTitlesUtils {
 	}
 
 	public static boolean isMatch( String fileName, int season, int episode ) {
-		
 		List<String> matches = getSeasonEpisodeMatchList( season, episode );
-		
-		for (String string : matches) {
-			if (fileName.contains( string )) {
-				return true;
-			}
-		}
-		
-		return false;
+		return matches.stream().anyMatch(element -> fileName.contains(element));
 	}
 	
 	public static boolean isExactMatch( String fileName, int season, int episode ) {
-		
 		List<String> matches = getSeasonEpisodeMatchList( season, episode );
-
-		for (String string : matches) {
-			if (fileName.equals( string )) {
-				return true;
-			}
-		}
-		
-		return false;
+		return matches.contains(fileName);
 	}
 
 	public static boolean isSeasonMatch( String fileName, int season ) {
-		
 		List<String> matches = getSeasonMatchList( season );
-
-		for (String string : matches) {
-			if (fileName.equals( string )) {
-				return true;
-			}
-		}
-		
-		return false;
+		return matches.contains(fileName);
 	}
 
 }

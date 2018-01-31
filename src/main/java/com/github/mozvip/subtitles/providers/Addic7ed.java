@@ -47,7 +47,7 @@ public class Addic7ed extends SubtitlesFinder implements EpisodeSubtitlesFinder 
 
 		String showId = getShowId( showName );
 		if (showId == null) {
-			LOGGER.warn( String.format("Couldn't find show %s", showName) );
+			LOGGER.warn( "Couldn't find show {}", showName );
 			return null;
 		}
 		
@@ -146,7 +146,7 @@ public class Addic7ed extends SubtitlesFinder implements EpisodeSubtitlesFinder 
 			String show = showLink.text();
 
 			String href = showLink.absUrl("href");					
-			String showId = href.substring( href.lastIndexOf("/") + 1);
+			String showId = href.substring( href.lastIndexOf('/') + 1);
 
 			show = getShowName(show);
 			show = extractNameFromShowName(show);
