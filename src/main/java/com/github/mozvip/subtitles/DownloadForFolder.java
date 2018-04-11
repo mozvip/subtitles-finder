@@ -1,5 +1,4 @@
 package com.github.mozvip.subtitles;
-
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.DirectoryStream.Filter;
@@ -50,6 +49,8 @@ public class DownloadForFolder {
 					results.add( p );
 				}
 			}
+		} else {
+			LOGGER.warn("Folder {} can not be read", folder.toAbsolutePath().toString());
 		}
 		return results;
 	}
@@ -65,7 +66,7 @@ public class DownloadForFolder {
 
 		SubtitleDownloader downloader = new SubtitleDownloader();
 
-		// -f \\DLINK-0348F4\Volume_1\series -f \\DLINK-0348F4\Volume_2\series -f \\DLINK-4T\Volume_1\series -f \\DLINK-4T\Volume_2\series -f \\DLINK-5BBBC4\Volume_1\series -f \\DLINK-5BBBC4\Volume_2\series -l fr
+		// -f \\192.168.0.201\Volume_1\series -f \\192.168.0.201\Volume_2\series -f \\192.168.0.202\Volume_1\series -f \\192.168.0.202\Volume_2\series -f \\192.168.0.203\Volume_1\series -f \\192.168.0.203\Volume_2\series -i VOST -l fr
 
 		for (Path folder: main.folders) {
 			LOGGER.info("Parsing source folder {}", folder.toAbsolutePath().toString());
