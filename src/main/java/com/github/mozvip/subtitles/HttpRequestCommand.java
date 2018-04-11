@@ -1,8 +1,6 @@
 package com.github.mozvip.subtitles;
 
-import com.netflix.hystrix.HystrixCommand;
-import com.netflix.hystrix.HystrixCommandGroupKey;
-import com.netflix.hystrix.HystrixCommandProperties;
+import com.netflix.hystrix.*;
 import okhttp3.*;
 
 import java.io.File;
@@ -36,9 +34,14 @@ public class HttpRequestCommand extends HystrixCommand<Response> {
         super(
                 Setter.withGroupKey(
                         HystrixCommandGroupKey.Factory.asKey(request.url().host())
+                ).andCommandKey(
+                        HystrixCommandKey.Factory.asKey(request.url().toString())
                 ).andCommandPropertiesDefaults(
                         HystrixCommandProperties.Setter()
-                                .withExecutionTimeoutInMilliseconds(30 * 1000)
+                                .withExecutionTimeoutInMilliseconds(15 * 1000)
+                                .withCircuitBreakerRequestVolumeThreshold(2)
+                                .withMetricsRollingStatisticalWindowInMilliseconds(60 * 1000)
+                                .withCircuitBreakerSleepWindowInMilliseconds(240 * 1000) // circuit will remain open for 4 minutes
                 )
             );
         this.request = request;
