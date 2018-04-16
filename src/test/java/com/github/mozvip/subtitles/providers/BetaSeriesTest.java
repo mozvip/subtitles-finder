@@ -30,7 +30,13 @@ public class BetaSeriesTest {
 	@Test
 	public void testGot() throws ExecutionException {
 		RemoteSubTitles subtitles = finder.downloadEpisodeSubtitle("Game of Thrones", 2, 1, "IMMERSE", VideoSource.HDTV, Locale.FRENCH);
-		Assert.assertTrue(subtitles.getTitle().contains(".imm."));
+		Assert.assertTrue(subtitles.getTitle().contains("-IMMER"));
+	}
+
+	@Test
+	public void testGotEn() throws ExecutionException {
+		RemoteSubTitles subtitles = finder.downloadEpisodeSubtitle("Game of Thrones", 2, 1, "IMMERSE", VideoSource.HDTV, Locale.ENGLISH);
+		Assert.assertTrue(subtitles.getTitle().contains("-IMMER"));
 	}
 
 }

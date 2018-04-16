@@ -3,7 +3,7 @@ package com.github.mozvip.subtitles.model;
 public class VideoInfo {
 	
 	private String name;
-	private VideoQuality quality = null;
+	private VideoQuality quality;
 	private String release;
 	private VideoSource source;
 	
@@ -20,7 +20,8 @@ public class VideoInfo {
 
 	protected void parseExtraData() {
 		source = VideoSource.findMatch( extraNameData );
-		release = Release.firstMatch(extraNameData).name();
+		Release release = Release.firstMatch(extraNameData);
+		this.release = release != null ? release.name() : null;
 		if (quality == null) {
 			quality = VideoQuality.findMatch( extraNameData );
 		}

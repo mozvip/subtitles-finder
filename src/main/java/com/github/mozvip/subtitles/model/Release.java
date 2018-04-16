@@ -83,8 +83,7 @@ public enum Release {
 	ViPER,
     VISUM,
 	YESTV,
-	YOOX,
-	UNKNOWN(null);
+	YOOX;
 	
 	private String[] aliases;
 	
@@ -112,7 +111,7 @@ public enum Release {
 				return release;
 			}
 		}
-		return UNKNOWN;
+		return null;
 	}
 
 }

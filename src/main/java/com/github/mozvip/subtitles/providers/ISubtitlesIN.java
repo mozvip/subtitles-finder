@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
+import com.github.mozvip.subtitles.model.VideoSource;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -19,8 +20,8 @@ public class ISubtitlesIN extends SubtitlesFinder implements MovieSubtitlesFinde
 	public final static String BASE_URL = "https://isubtitles.in";
 
 	@Override
-	public RemoteSubTitles downloadMovieSubtitles(String movieName, int year, String release, BigDecimal fps,
-			Locale locale) throws Exception {
+	public RemoteSubTitles downloadMovieSubtitles(String movieName, int year, String release, VideoSource videoSource, BigDecimal fps,
+												  Locale locale) throws Exception {
 		
 		Release releaseGroup = Release.firstMatch( release );
 		
@@ -45,7 +46,7 @@ public class ISubtitlesIN extends SubtitlesFinder implements MovieSubtitlesFinde
 			
 			boolean hasRelease = false;
 			
-			if (releaseGroup != Release.UNKNOWN) {
+			if (releaseGroup != null) {
 				Elements links = row.select(".movie-release a");
 				for (Element element : links) {
 					if (Release.firstMatch( element.text() ) == releaseGroup) {
@@ -60,7 +61,7 @@ public class ISubtitlesIN extends SubtitlesFinder implements MovieSubtitlesFinde
 				String downloadUrl = row.select("a[href*=download]").first().absUrl("href");
 				byte[] zipData = get(downloadUrl, movieUrl).get().body().bytes();
 				
-				RemoteSubTitles subtitles = SubTitlesZip.selectBestSubtitles(this, zipData, release, locale);
+				RemoteSubTitles subtitles = SubTitlesZip.selectBestSubtitlesFromZip(this, zipData, release, videoSource, locale);
 				subtitles.setScore( 10 );
 				return subtitles;
 			}

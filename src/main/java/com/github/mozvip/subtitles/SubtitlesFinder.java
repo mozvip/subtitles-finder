@@ -3,6 +3,7 @@ package com.github.mozvip.subtitles;
 import java.io.IOException;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
+import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -105,21 +106,6 @@ public abstract class SubtitlesFinder {
         return new HttpRequestCommand(request).queue();
 	}
 
-	protected int evaluateSubtitleForRelease(String subtitleName, String release, VideoSource source) {
-		int score = 1;
 
-		Release subtitleRelease = Release.firstMatch(subtitleName);
-		if (subtitleRelease != null && release != null && subtitleRelease.match( release )) {
-			score = 15;
-		}
-
-		VideoSource subtitleSource = VideoSource.findMatch(subtitleName);
-		if (subtitleSource != null && source != null && subtitleSource.equals( source )) {
-			score += 5;
-		}
-
-		LOGGER.info("{} - Evaluated {} - score = {}", this.getClass().getSimpleName(), subtitleName, score);
-		return score;
-	}
 
 }

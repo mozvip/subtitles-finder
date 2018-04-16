@@ -6,6 +6,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
 
+import com.github.mozvip.subtitles.model.VideoSource;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.apache.commons.compress.utils.SeekableInMemoryByteChannel;
@@ -21,39 +22,9 @@ public class SubTitlesZip {
 	private final static Logger LOGGER = LoggerFactory.getLogger( SubTitlesZip.class );
 
 	private SubTitlesZip() {}
-	
-	public static int evaluateScore( String subtitleName, Locale locale, String release ) {
-		
-		if ((StringUtils.containsIgnoreCase(subtitleName, ".VF.") || StringUtils.containsIgnoreCase(subtitleName, ".FR.") || StringUtils.containsIgnoreCase(subtitleName, ".FR-") ) && !locale.getLanguage().equals("fr")) {
-			return -1;
-		}
 
-		if ((StringUtils.containsIgnoreCase(subtitleName, ".EN.") || StringUtils.containsIgnoreCase(subtitleName, ".EN-") || StringUtils.containsIgnoreCase(subtitleName, ".VO-") || StringUtils.containsIgnoreCase(subtitleName, ".VO.") || StringUtils.containsIgnoreCase(subtitleName, ".VOsync.") ) && !locale.getLanguage().equals("en")) {
-			return -1;
-		}
-
-		int score = 0;
-		// test for release
-		if ( release != null ) {
-			Release releaseGroup = Release.firstMatch( release );
-			if (releaseGroup != null && releaseGroup != Release.UNKNOWN) {
-				if ( releaseGroup.match( subtitleName ) ) {
-					score = 10;
-				}
-			}
-		}
-
-		if (StringUtils.endsWithIgnoreCase(subtitleName, ".srt")) {
-			score += 1;
-		}
-
-		LOGGER.info("Evaluated " + subtitleName + " score=" + score);
-
-		return score;
-	}
-	
-	public static RemoteSubTitles selectBestSubtitles(SubtitlesFinder finder, byte[] zipData, String release, Locale locale) throws IOException {
-		return selectBestSubtitles(finder, zipData, release, locale, -1, -1);
+	public static RemoteSubTitles selectBestSubtitlesFromZip(SubtitlesFinder finder, byte[] zipData, String release, VideoSource videoSource, Locale locale) throws IOException {
+		return selectBestSubtitlesFromZip(finder, zipData, release, videoSource, locale, -1, -1);
 	}
 
 	public static List<String> listofFileNames(byte[] zipData) throws IOException {
@@ -98,7 +69,7 @@ public class SubTitlesZip {
 		return null;
 	}
 
-	public static RemoteSubTitles selectBestSubtitles(SubtitlesFinder finder, byte[] zipData, String release, Locale locale, int season, int episode) throws IOException {
+	public static RemoteSubTitles selectBestSubtitlesFromZip(SubtitlesFinder finder, byte[] zipData, String release, VideoSource videoSource, Locale locale, int season, int episode) throws IOException {
 		SeekableInMemoryByteChannel inMemoryByteChannel = new SeekableInMemoryByteChannel(zipData);
 		ZipFile zip;
 		try {
@@ -132,7 +103,7 @@ public class SubTitlesZip {
 					continue;
 				}
 	
-				int score = evaluateScore( entry.getName(), locale, release );
+				int score = SubTitleEvaluator.evaluateSubtitleForRelease(finder, entry.getName(), locale, release, videoSource );
 				
 				if (score < 0) {
 					continue;

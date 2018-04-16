@@ -45,13 +45,13 @@ public class SousTitresEUTest extends AbstractSubtitleFinderTest {
 	@Test
 	public void testMovie() throws ExecutionException {
 	    String release = "GECKOS";
-        RemoteSubTitles remoteSubTitles = finder.downloadMovieSubtitles("Wind River", 2017, release, new BigDecimal(25.0f), Locale.FRENCH);
+        RemoteSubTitles remoteSubTitles = finder.downloadMovieSubtitles("Wind River", 2017, release, VideoSource.BLURAY, new BigDecimal(25.0f), Locale.FRENCH);
         Assert.assertTrue(remoteSubTitles != null && StringUtils.containsIgnoreCase(remoteSubTitles.getTitle(), release));
 	}
 
 	@Test
 	public void testNotFound() throws Exception {
-		RemoteSubTitles remoteSubTitles = finder.downloadMovieSubtitles("thismoviedoesnotexist", 2017, "FOV", BigDecimal.valueOf(25.0), Locale.FRENCH);
+		RemoteSubTitles remoteSubTitles = finder.downloadMovieSubtitles("thismoviedoesnotexist", 2017, "FOV", VideoSource.HDTV, BigDecimal.valueOf(25.0), Locale.FRENCH);
 		Assert.assertTrue( remoteSubTitles == null);
 	}
 

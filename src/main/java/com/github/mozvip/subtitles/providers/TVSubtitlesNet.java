@@ -6,8 +6,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Pattern;
 
+import com.github.mozvip.subtitles.*;
 import com.github.mozvip.subtitles.model.VideoSource;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Document;
@@ -15,12 +15,6 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.github.mozvip.subtitles.EpisodeSubtitlesFinder;
-import com.github.mozvip.subtitles.RemoteSubTitles;
-import com.github.mozvip.subtitles.SubTitlesUtils;
-import com.github.mozvip.subtitles.SubTitlesZip;
-import com.github.mozvip.subtitles.SubtitlesFinder;
 
 public class TVSubtitlesNet extends SubtitlesFinder implements EpisodeSubtitlesFinder {
 	
@@ -82,7 +76,7 @@ public class TVSubtitlesNet extends SubtitlesFinder implements EpisodeSubtitlesF
 				continue;
 			}
 			for ( Element subtitle : subtitles ) {
-				int score = evaluateSubtitleForRelease( subtitle.select("h5").first().text(), release, source);
+				int score = SubTitleEvaluator.evaluateSubtitleForRelease(this, subtitle.select("h5").first().text(), locale, release, source);
 				if (score > maxScore) {
 					selectedSubtitle = subtitle;
 					maxScore = score;
@@ -98,7 +92,7 @@ public class TVSubtitlesNet extends SubtitlesFinder implements EpisodeSubtitlesF
 			
 			byte[] bytes = getBytes( downloadURL, href );
 			try {
-				return SubTitlesZip.selectBestSubtitles(this, bytes, release, locale );
+				return SubTitlesZip.selectBestSubtitlesFromZip(this, bytes, release, source, locale );
 			} catch (IOException e) {
 				throw new ExecutionException(e);
 			}

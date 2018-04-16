@@ -30,12 +30,4 @@ public class TVShowEpisodeInfo extends VideoInfo {
 		return lastEpisode;
 	}
 
-	public Collection<Integer> getEpisodes() {
-		List<Integer> episodes = new ArrayList<Integer>();
-		for (int i=firstEpisode; i<=lastEpisode; i++) {
-			episodes.add( i );
-		}
-		return episodes;
-	}
-
 }

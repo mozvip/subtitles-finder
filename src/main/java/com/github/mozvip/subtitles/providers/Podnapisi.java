@@ -7,17 +7,13 @@ import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
+import com.github.mozvip.subtitles.*;
 import com.github.mozvip.subtitles.model.VideoSource;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import com.github.mozvip.subtitles.EpisodeSubtitlesFinder;
-import com.github.mozvip.subtitles.MovieSubtitlesFinder;
-import com.github.mozvip.subtitles.RemoteSubTitles;
-import com.github.mozvip.subtitles.SubTitlesZip;
-import com.github.mozvip.subtitles.SubtitlesFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,7 +55,7 @@ public class Podnapisi extends SubtitlesFinder implements EpisodeSubtitlesFinder
 	}
 
 	@Override
-	public RemoteSubTitles downloadMovieSubtitles(String movieName, int year, String release, BigDecimal fps, Locale locale)
+	public RemoteSubTitles downloadMovieSubtitles(String movieName, int year, String release, VideoSource videoSource, BigDecimal fps, Locale locale)
 			throws Exception {
 		String queryString = movieName.toLowerCase();
 		if (StringUtils.contains(queryString, "(")) {
@@ -67,7 +63,7 @@ public class Podnapisi extends SubtitlesFinder implements EpisodeSubtitlesFinder
 		}
 
 		String url = buildMovieSearchURL(queryString, year, locale);
-		return extractSubtitles(release, null, locale, url);
+		return extractSubtitles(release, videoSource, locale, url);
 	}
 
 	private RemoteSubTitles extractSubtitles(String release, VideoSource source, Locale locale, String url) throws ExecutionException {
@@ -83,13 +79,13 @@ public class Podnapisi extends SubtitlesFinder implements EpisodeSubtitlesFinder
 
 			int score = 0;
 			if (StringUtils.isNoneEmpty(releaseText)) {
-				score = evaluateSubtitleForRelease(releaseText, release, source);
+				score = SubTitleEvaluator.evaluateSubtitleForRelease(this, releaseText, locale, release, source);
 			} else {
 				byte[] bytes = getBytes(currentSubtitlesHref, url);
 				try {
                     List<String> strings = SubTitlesZip.listofFileNames(bytes);
                     for (String fileName : strings) {
-                        score = evaluateSubtitleForRelease(fileName, release, source); // FIXME : only keep the best
+                        score = SubTitleEvaluator.evaluateSubtitleForRelease(this, fileName, locale, release, source); // FIXME : only keep the best
                     }
 				} catch (IOException e) {
 					LOGGER.error(e.getMessage(), e);

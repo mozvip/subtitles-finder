@@ -8,15 +8,11 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.MatchResult;
 
+import com.github.mozvip.subtitles.*;
 import com.github.mozvip.subtitles.model.VideoSource;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-
-import com.github.mozvip.subtitles.EpisodeSubtitlesFinder;
-import com.github.mozvip.subtitles.RemoteSubTitles;
-import com.github.mozvip.subtitles.SubTitlesZip;
-import com.github.mozvip.subtitles.SubtitlesFinder;
 
 import okhttp3.Response;
 
@@ -106,9 +102,9 @@ public class BetaSeries extends SubtitlesFinder implements EpisodeSubtitlesFinde
 				}
 	
 				if (filename.endsWith(".zip")) {
-					subtitle = SubTitlesZip.selectBestSubtitles(this, response.body().bytes(), release, locale);
+					subtitle = SubTitlesZip.selectBestSubtitlesFromZip(this, response.body().bytes(), release, source, locale);
 				} else {
-					subtitle = new RemoteSubTitles(this, filename, response.body().bytes(), evaluateSubtitleForRelease(filename, release, source));
+					subtitle = new RemoteSubTitles(this, filename, response.body().bytes(), SubTitleEvaluator.evaluateSubtitleForRelease(this, filename, locale, release, source));
 				}
 			} catch (Exception e) {
 				throw new ExecutionException(e);

@@ -10,6 +10,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.MatchResult;
 
+import com.github.mozvip.subtitles.SubTitleEvaluator;
 import com.github.mozvip.subtitles.model.VideoSource;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -67,7 +68,7 @@ public class Addic7ed extends SubtitlesFinder implements EpisodeSubtitlesFinder 
 			int currentScore = -10;
 			String currentURL = null;
 			for ( Element row : matchingNodes ) {
-				List<String> compatibleReleases = new ArrayList<String>();
+				List<String> compatibleReleases = new ArrayList<>();
 				Element parentTable = row.parent().parent();
 
 				String text = row.text();
@@ -96,22 +97,12 @@ public class Addic7ed extends SubtitlesFinder implements EpisodeSubtitlesFinder 
 	
 				}
 	
-				String url = "http://www.addic7ed.com" + row.select("a.buttonDownload").first().attr("href");
-
-				if (release != null && !compatibleReleases.isEmpty()) {
-					for (String string : compatibleReleases) {
-						if (string.contains(release)) {
-							currentScore = 15;
-							currentURL = url;
-							break;
-						}
-					}
-				} else {
-					currentScore = 1;
+				int evaluation = SubTitleEvaluator.evaluateSubtitleForRelease(this, text, compatibleReleases, locale, release, source);
+				if (evaluation > currentScore) {
+					currentScore = evaluation;
+					String url = "http://www.addic7ed.com" + row.select("a.buttonDownload").first().attr("href");
 					currentURL = url;
 				}
-
-				LOGGER.info("Evaluated {}, score = {}", text, currentScore);
 			}
 			
 			if (currentURL != null) {

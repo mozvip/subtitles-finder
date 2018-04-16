@@ -99,7 +99,7 @@ public class SousTitresEU extends SubtitlesFinder implements EpisodeSubtitlesFin
 				byte[] bytes = getBytes(href, url);
 				RemoteSubTitles currentRemoteSubTitles;
 				try {
-					currentRemoteSubTitles = SubTitlesZip.selectBestSubtitles(this, bytes, release, locale);
+					currentRemoteSubTitles = SubTitlesZip.selectBestSubtitlesFromZip(this, bytes, release, source, locale);
 				} catch (IOException e) {
 					LOGGER.error(e.getMessage(), e);
 					continue;
@@ -114,7 +114,7 @@ public class SousTitresEU extends SubtitlesFinder implements EpisodeSubtitlesFin
 
 				byte[] bytes = getBytes(href, url);
 				try {
-					RemoteSubTitles currentRemoteSubTitles = SubTitlesZip.selectBestSubtitles(this, bytes, release, locale,
+					RemoteSubTitles currentRemoteSubTitles = SubTitlesZip.selectBestSubtitlesFromZip(this, bytes, release, source, locale,
 							season, episode);
 					if (currentRemoteSubTitles != null) {
 						if (bestSubTitles == null || currentRemoteSubTitles.getScore() > bestSubTitles.getScore()) {
@@ -133,7 +133,7 @@ public class SousTitresEU extends SubtitlesFinder implements EpisodeSubtitlesFin
 	}
 
 	@Override
-	public RemoteSubTitles downloadMovieSubtitles(String movieName, int year, String release, BigDecimal fps,
+	public RemoteSubTitles downloadMovieSubtitles(String movieName, int year, String release, VideoSource videoSource, BigDecimal fps,
 			Locale locale) throws ExecutionException {
 
 		String url = String.format("%s/search.html?q=%s+%d", ROOT_URL, movieName, year);
@@ -168,7 +168,7 @@ public class SousTitresEU extends SubtitlesFinder implements EpisodeSubtitlesFin
 
 			try {
 				byte[] bytes = getBytes(href, url);			
-				RemoteSubTitles currentRemoteSubTitles = SubTitlesZip.selectBestSubtitles(this, bytes, release, locale);
+				RemoteSubTitles currentRemoteSubTitles = SubTitlesZip.selectBestSubtitlesFromZip(this, bytes, release, videoSource, locale);
 				if (currentRemoteSubTitles != null) {
 					if (bestSubTitles == null || currentRemoteSubTitles.getScore() > bestSubTitles.getScore()) {
 						bestSubTitles = currentRemoteSubTitles;
