@@ -62,8 +62,7 @@ public class SousTitresEU extends SubtitlesFinder implements EpisodeSubtitlesFin
 			}
 			document = Jsoup.parse(response.body().string(), url);
 		} catch (InterruptedException | IOException e) {
-			LOGGER.error(e.getMessage(), e);
-			return null;
+			throw new ExecutionException(e);
 		}
 
 		nodes = document.select("a > span.episodenum");
