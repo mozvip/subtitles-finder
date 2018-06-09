@@ -47,7 +47,7 @@ public class SubtitleDownloader {
         return false;
     }
 
-    public boolean findSubtitlesFor(Path path, Locale locale, boolean overwrite) throws Exception {
+    public RemoteSubTitles findSubtitlesFor(Path path, Locale locale, boolean overwrite) throws Exception {
 
         LOGGER.info("Handling {}", path.getFileName().toString());
 
@@ -59,7 +59,7 @@ public class SubtitleDownloader {
 
         if (Files.exists(destinationFile) && !overwrite) {
             LOGGER.info("An existing subtitle has been found and overwrite is not allowed");
-            return false;
+            return null;
         }
 
         Set<String> blackListedMD5s = new HashSet<>();
@@ -94,7 +94,7 @@ public class SubtitleDownloader {
         if (currentSubTitles == null) {
 
             if (videoInfo == null) {
-                return true;
+                return null;
             }
 
             if (videoInfo instanceof TVShowEpisodeInfo) {
@@ -143,10 +143,9 @@ public class SubtitleDownloader {
             try (OutputStream output = Files.newOutputStream(destinationFile)) {
                 output.write(currentSubTitles.getData());
             }
-            return true;
         }
 
-        return false;
+        return currentSubTitles;
     }
 
 

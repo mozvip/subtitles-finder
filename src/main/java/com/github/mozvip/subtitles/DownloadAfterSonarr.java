@@ -22,10 +22,11 @@ public class DownloadAfterSonarr {
         for (Map.Entry<String, String> entry : environment.entrySet()) {
             LOGGER.info("{}={}", entry.getKey(), entry.getValue());
         }
+        LOGGER.info("========");
 
     }
 
-    public void download() throws Exception {
+    public RemoteSubTitles download() throws Exception {
 
         String eventType = environment.get("sonarr_eventtype");
         if (eventType == null) {
@@ -39,8 +40,10 @@ public class DownloadAfterSonarr {
             Path path = Paths.get(videoFilePath);
 
             SubtitleDownloader downloader = new SubtitleDownloader();
-            downloader.findSubtitlesFor(path, Locale.FRENCH, true);
+            return downloader.findSubtitlesFor(path, Locale.FRENCH, true);
         }
+
+        return null;
 
     }
 

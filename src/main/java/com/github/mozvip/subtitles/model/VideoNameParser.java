@@ -126,6 +126,21 @@ public class VideoNameParser {
 
 	public static MovieInfo getMovieInfo( String title ) {
 
+        String[] groups = RegExp.parseGroups(title, "(.+)\\.(19\\d{2}|20\\d{2})\\.(?:\\D+\\.)?([^.]+p)\\.([^.]+)\\.(.+)-([^.]+)\\.([^.]+)");
+        if (groups != null) {
+            String name = groups[0];
+            int year = Integer.parseInt(groups[1]);
+            VideoQuality quality = VideoQuality.findMatch(groups[2]);
+            VideoSource source = VideoSource.findMatch(groups[3]);
+            String release = groups[5];
+
+            if (quality != null && source != null) {
+                return new MovieInfo(name, year, quality, source, release);
+            } else {
+                // TODO
+            }
+        }
+
         VideoQuality quality = null;
         if (title.contains("1080")) {
             title = title.replace("1080p", "");
@@ -140,7 +155,7 @@ public class VideoNameParser {
 
         VideoSource source = VideoSource.findMatch(title);
 
-        String[] groups = RegExp.parseGroups(title, "(" + NAME_REGEXP + ")" + SEPARATOR_REGEXP + "\\(?(19\\d{2}|20\\d{2})\\)?(.*)");
+        groups = RegExp.parseGroups(title, "(" + NAME_REGEXP + ")" + SEPARATOR_REGEXP + "\\(?(19\\d{2}|20\\d{2})\\)?(.*)");
         if (groups != null) {
             String name = getName( groups[0] );
             return new MovieInfo( name, Integer.parseInt( groups[1]), quality, source, groups[2] );

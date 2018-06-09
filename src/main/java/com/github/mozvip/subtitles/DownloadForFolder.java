@@ -8,7 +8,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.regex.Pattern;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
@@ -17,7 +16,7 @@ import com.github.mozvip.subtitles.cli.PathConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DownloadForFolder {
+public class DownloadForFolder implements Runnable {
 
 	@Parameter(names={"-o", "-overwrite"}, description="Overwrite existing subtitles")
 	private boolean overwrite = false;
@@ -33,7 +32,7 @@ public class DownloadForFolder {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger( DownloadForFolder.class);
 
-	public static List<Path> getContents(Path folder, Filter<Path> filter, boolean recursive) throws IOException {
+	public List<Path> getContents(Path folder, Filter<Path> filter, boolean recursive) throws IOException {
 		List<Path> results = new ArrayList<>();
 		List<Path> folderResults = new ArrayList<>();
 		if (Files.isReadable( folder )) {
@@ -55,7 +54,20 @@ public class DownloadForFolder {
 		return results;
 	}
 
+	public DownloadForFolder() {
+
+	}
+
+	public DownloadForFolder(List<Path> folders, Locale locale, List<String> ignorePatterns, boolean overwrite) {
+		this.overwrite = overwrite;
+		this.folders = folders;
+		this.locale = locale;
+		this.ignorePatterns = ignorePatterns;
+	}
+
 	public static void main(String[] argv) throws IOException {
+
+		// -f \\192.168.0.201\Volume_1\series -f \\192.168.0.201\Volume_2\series -f \\192.168.0.202\Volume_1\series -f \\192.168.0.202\Volume_2\series -f \\192.168.0.203\Volume_1\series -f \\192.168.0.203\Volume_2\series -i VOST -l fr
 
 		DownloadForFolder main = new DownloadForFolder();
 
@@ -64,18 +76,29 @@ public class DownloadForFolder {
 				.build()
 				.parse(argv);
 
+		main.run();
+
+	}
+
+
+	@Override
+	public void run() {
 		SubtitleDownloader downloader = new SubtitleDownloader();
 
-		// -f \\192.168.0.201\Volume_1\series -f \\192.168.0.201\Volume_2\series -f \\192.168.0.202\Volume_1\series -f \\192.168.0.202\Volume_2\series -f \\192.168.0.203\Volume_1\series -f \\192.168.0.203\Volume_2\series -i VOST -l fr
-
-		for (Path folder: main.folders) {
+		for (Path folder: folders) {
 			LOGGER.info("Parsing source folder {}", folder.toAbsolutePath().toString());
-			List<Path> contents = getContents(folder, VideoFileFilter.getInstance(), true);
+			List<Path> contents;
+			try {
+				contents = getContents(folder, VideoFileFilter.getInstance(), true);
+			} catch (IOException e) {
+				LOGGER.error(e.getMessage(), e);
+				continue;
+			}
 			for (Path path : contents) {
 
 				boolean ignore = false;
-				if (main.ignorePatterns != null) {
-					for (String pattern: main.ignorePatterns) {
+				if (ignorePatterns != null) {
+					for (String pattern: ignorePatterns) {
 						if (path.getFileName().toString().contains(pattern)) {
 							ignore = true;
 							break;
@@ -88,16 +111,14 @@ public class DownloadForFolder {
 				}
 
 				try {
-					if (downloader.findSubtitlesFor(path, main.locale, main.overwrite)) {
-						LOGGER.info("Successfully subtitled {} in {}", path.toAbsolutePath().toString(), main.locale.getLanguage());
+					if (downloader.findSubtitlesFor(path, locale, overwrite) != null) {
+						LOGGER.info("Successfully subtitled {} in {}", path.toAbsolutePath().toString(), locale.getLanguage());
 					}
 				} catch (Exception e) {
 					LOGGER.error(e.getMessage(), e);
 				}
 			}
 		}
-
-
 	}
 
 }
