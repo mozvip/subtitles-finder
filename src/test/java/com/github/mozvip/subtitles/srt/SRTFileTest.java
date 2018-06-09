@@ -26,7 +26,7 @@ public class SRTFileTest {
 
     @Test
     public void getContents() throws IOException, NoSuchAlgorithmException {
-        List<Path> contents = DownloadForFolder.getContents(subTitlesPath, (Path p) -> p.getFileName().toString().endsWith(".srt"), true);
+        List<Path> contents = new DownloadForFolder().getContents(subTitlesPath, (Path p) -> p.getFileName().toString().endsWith(".srt"), true);
         for (Path content : contents) {
             SRTFile srt = SRTFile.fromPath(content);
             srt.computeSyncMD5();

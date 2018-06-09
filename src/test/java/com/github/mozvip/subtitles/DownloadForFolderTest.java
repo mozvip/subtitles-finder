@@ -26,7 +26,7 @@ public class DownloadForFolderTest {
 
     @Test
     public void getContents() throws IOException {
-        List<Path> contents = DownloadForFolder.getContents(videoPath, (Path p) -> true, true);
+        List<Path> contents = new DownloadForFolder().getContents(videoPath, (Path p) -> true, true);
         Assert.assertTrue(contents != null && contents.size() > 0);
     }
 

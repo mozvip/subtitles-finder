@@ -42,7 +42,7 @@ public class VideoNameParserTest {
             String title;
             while ((title = reader.readLine()) != null) {
                 String[] parts = title.split(";");
-                VideoInfo info = VideoNameParser.getMovieInfo(title);
+                VideoInfo info = VideoNameParser.getMovieInfo(parts[0]);
                 Assert.assertTrue(parts[0], info != null && info instanceof MovieInfo);
                 if (parts.length > 1) {
                     Assert.assertTrue(parts[0], info.getRelease().equalsIgnoreCase(parts[1]));
@@ -55,6 +55,6 @@ public class VideoNameParserTest {
     public void testParser() throws URISyntaxException {
         URL url = VideoNameParserTest.class.getResource("/video_folder/Wind.River.2017.1080p.BluRay.x264-GECKOS[rarbg].mkv");
         VideoInfo videoInfo = VideoNameParser.getVideoInfo(Paths.get(url.toURI()));
-        Assert.assertTrue(videoInfo instanceof MovieInfo);
+        Assert.assertTrue(videoInfo instanceof MovieInfo && videoInfo.getSource().equals(VideoSource.BLURAY));
     }
 }
