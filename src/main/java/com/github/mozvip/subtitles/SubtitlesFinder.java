@@ -97,6 +97,7 @@ public abstract class SubtitlesFinder {
 
 	protected Future<Response> get(String url, String refererUrl, int maxStale, TimeUnit timeUnit) {
 		Request.Builder builder = getRequestBuilder(url, refererUrl);
+		builder.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8");
 		if (maxStale > 0) {
 			builder.cacheControl(new CacheControl.Builder()
 					.maxStale(maxStale, timeUnit)
