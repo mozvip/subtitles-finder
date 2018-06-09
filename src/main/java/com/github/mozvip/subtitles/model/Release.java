@@ -10,6 +10,7 @@ public enum Release {
 	AAF(new String[] {"aaf"}),
 	acROBATT_MBE(new String[]{"acROBATT&MBE"}),
 	ADDiCTiON(new String[]{"ADDiCTiON"}),
+	AMZN,
 	ASAP( new String[] {"ASAP", "asa"}),
     ATeam,
     AVC,
