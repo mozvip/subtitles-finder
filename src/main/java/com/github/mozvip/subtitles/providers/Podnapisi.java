@@ -19,12 +19,14 @@ import org.slf4j.LoggerFactory;
 
 public class Podnapisi extends SubtitlesFinder implements EpisodeSubtitlesFinder, MovieSubtitlesFinder {
 
+	public static final String ROOT_URL = "https://www.podnapisi.net";
+
 	private final static Logger LOGGER = LoggerFactory.getLogger(Podnapisi.class);
 
 	private String buildEpisodeSearchURL(String name, int season, int episode, Locale locale) {
 		name = name.trim().replace(' ', '+');
 		String baseUrl = String.format(
-				"http://www.podnapisi.net/subtitles/search/advanced?keywords=%s&seasons=%d&episodes=%d&language=%s",
+				ROOT_URL + "/subtitles/search/advanced?keywords=%s&seasons=%d&episodes=%d&language=%s",
 				name, season, episode, locale.getLanguage());
 
 		// TODO: retrieve FPS with mediainfo ? (&fps=25 or &fps=23.976)
@@ -34,7 +36,7 @@ public class Podnapisi extends SubtitlesFinder implements EpisodeSubtitlesFinder
 	private String buildMovieSearchURL(String name, int year, Locale locale) {
 		name = name.trim().replace(' ', '+');
 		String baseUrl = String.format(
-				"http://www.podnapisi.net/subtitles/search/advanced?keywords=%s&year=%d&language=%s", name, year,
+				ROOT_URL + "/subtitles/search/advanced?keywords=%s&year=%d&language=%s", name, year,
 				locale.getLanguage());
 
 		// TODO: retrieve FPS with mediainfo ? (&fps=25 or &fps=23.976)
@@ -78,7 +80,7 @@ public class Podnapisi extends SubtitlesFinder implements EpisodeSubtitlesFinder
 			String currentSubtitlesHref = row.select("a[href*=/download]").first().absUrl("href");
 
 			int score = 0;
-			if (StringUtils.isNoneEmpty(releaseText)) {
+			if (StringUtils.isNotEmpty(releaseText)) {
 				score = SubTitleEvaluator.evaluateSubtitleForRelease(this, releaseText, locale, release, source);
 			} else {
 				byte[] bytes = getBytes(currentSubtitlesHref, url);

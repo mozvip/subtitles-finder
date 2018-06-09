@@ -26,7 +26,9 @@ import com.github.mozvip.subtitles.SubtitlesFinder;
 import okhttp3.Response;
 
 public class Addic7ed extends SubtitlesFinder implements EpisodeSubtitlesFinder {
-	
+
+	public static final String ROOT_URL = "http://www.addic7ed.com";
+
 	private final static Logger LOGGER = LoggerFactory.getLogger( Addic7ed.class );
 
 	public Addic7ed() throws ExecutionException {
@@ -54,7 +56,7 @@ public class Addic7ed extends SubtitlesFinder implements EpisodeSubtitlesFinder 
 		
 		try {
 			
-			String episodeLookupURL = "http://www.addic7ed.com/re_episode.php?ep=" + showId + "-" + season + "x" + episode;
+			String episodeLookupURL = ROOT_URL + "/re_episode.php?ep=" + showId + "-" + season + "x" + episode;
 			Response response = get( episodeLookupURL, null, 1, TimeUnit.DAYS ).get();
 			
 			String episodeUrl = response.request().url().toString();
@@ -100,7 +102,7 @@ public class Addic7ed extends SubtitlesFinder implements EpisodeSubtitlesFinder 
 				int evaluation = SubTitleEvaluator.evaluateSubtitleForRelease(this, text, compatibleReleases, locale, release, source);
 				if (evaluation > currentScore) {
 					currentScore = evaluation;
-					String url = "http://www.addic7ed.com" + row.select("a.buttonDownload").first().attr("href");
+					String url = ROOT_URL + row.select("a.buttonDownload").first().attr("href");
 					currentURL = url;
 				}
 			}
@@ -131,7 +133,7 @@ public class Addic7ed extends SubtitlesFinder implements EpisodeSubtitlesFinder 
 	}
 	
 	private void init() throws ExecutionException {
-		Document document = getDocument( "http://www.addic7ed.com/shows.php", null, 1, TimeUnit.DAYS );
+		Document document = getDocument(ROOT_URL + "/shows.php", null, 1, TimeUnit.DAYS );
 		Elements showLinks = document.select( "h3 > a" );
 		for ( Element showLink : showLinks ) {
 			String show = showLink.text();
