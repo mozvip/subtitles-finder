@@ -54,17 +54,6 @@ public class DownloadForFolder implements Runnable {
 		return results;
 	}
 
-	public DownloadForFolder() {
-
-	}
-
-	public DownloadForFolder(List<Path> folders, Locale locale, List<String> ignorePatterns, boolean overwrite) {
-		this.overwrite = overwrite;
-		this.folders = folders;
-		this.locale = locale;
-		this.ignorePatterns = ignorePatterns;
-	}
-
 	public static void main(String[] argv) throws IOException {
 
 		// -f \\192.168.0.201\Volume_1\series -f \\192.168.0.201\Volume_2\series -f \\192.168.0.202\Volume_1\series -f \\192.168.0.202\Volume_2\series -f \\192.168.0.203\Volume_1\series -f \\192.168.0.203\Volume_2\series -i VOST -l fr

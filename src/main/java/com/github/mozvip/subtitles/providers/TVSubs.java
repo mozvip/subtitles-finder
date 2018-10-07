@@ -21,7 +21,7 @@ public class TVSubs extends SubtitlesFinder implements EpisodeSubtitlesFinder {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger( TVSubs.class );
 
-	private Document tvShowsDocument = null;
+	private Document tvShowsDocument;
 	private Map<String, String> seriesMap = new HashMap<String, String>();
 
 	public TVSubs() throws ExecutionException {
