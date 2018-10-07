@@ -10,6 +10,7 @@ import java.util.regex.MatchResult;
 
 import com.github.mozvip.subtitles.*;
 import com.github.mozvip.subtitles.model.VideoSource;
+import okhttp3.HttpUrl;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -93,14 +94,9 @@ public class BetaSeries extends SubtitlesFinder implements EpisodeSubtitlesFinde
 
 			try (Response response = get(zipFileURL, element.baseUri()).get()) {
 
-				String contentDisposition = response.header("Content-Disposition");
-				String filename;
-				try (Scanner scanner = new Scanner(contentDisposition)) {
-					scanner.findInLine(".*filename=.(.*).");
-					MatchResult result = scanner.match();
-					filename = result.group( 1 );
-				}
-	
+				String url = response.request().url().toString();
+				String filename = url.substring(url.lastIndexOf('/')+1);
+
 				if (filename.endsWith(".zip")) {
 					subtitle = SubTitlesZip.selectBestSubtitlesFromZip(this, response.body().bytes(), release, source, locale);
 				} else {
