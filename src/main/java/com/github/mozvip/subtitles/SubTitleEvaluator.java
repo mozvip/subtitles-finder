@@ -53,7 +53,7 @@ public class SubTitleEvaluator {
             score += 5;
         }
 
-        LOGGER.info("{} - Evaluated {} - score = {}", sourceFinder.getClass().getSimpleName(), subtitleName, score);
+        LOGGER.info("{} - Evaluated {} for {}/{} - score = {}", sourceFinder.getClass().getSimpleName(), subtitleName, videoRelease, source, score);
         return score;
     }
 
