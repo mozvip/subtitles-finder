@@ -22,7 +22,7 @@ deploy:
     on:
       repo: $TRAVIS_REPO_SLUG
       branch: master
-      jdk: oraclejdk8
+      jdk: openjdk11
   -
     provider: script
     script: mvn --settings .travis/settings.xml org.codehaus.mojo:versions-maven-plugin:2.1:set -DnewVersion=$TRAVIS_TAG 1>/dev/null 2>/dev/null; mvn clean deploy --settings .travis/settings.xml -DskipTests=true -B -U
