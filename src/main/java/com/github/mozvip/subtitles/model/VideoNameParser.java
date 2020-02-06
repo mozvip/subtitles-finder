@@ -2,6 +2,7 @@ package com.github.mozvip.subtitles.model;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Scanner;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -62,25 +63,26 @@ public class VideoNameParser {
 		return name.trim();
 	}
 
-	public static TVShowEpisodeInfo getEpisodeInfo( String tvshow, String title ) {
+	public static TVShowEpisodeInfo getEpisodeInfo( String tvshow, String fileName ) {
 
+	    // "(fileName)\.s()e()\.(quality)\.(source)\.(codec)-(release)\.(ext)";
         VideoQuality quality = null;
-        if (title.contains("1080")) {
-            title = title.replace("1080p", "");
-            title = title.replace("1080", "");
+        if (fileName.contains("1080")) {
+            fileName = fileName.replace("1080p", "");
+            fileName = fileName.replace("1080", "");
             quality = VideoQuality._1080p;
         }
-        if (title.contains("2160")) {
-            title = title.replace("2160p", "");
-            title = title.replace("2160", "");
+        if (fileName.contains("2160")) {
+            fileName = fileName.replace("2160p", "");
+            fileName = fileName.replace("2160", "");
             quality = VideoQuality._2160p;
         }
-        if (title.contains("x264")) {
-            title = title.replace("x264", "");
+        if (fileName.contains("x264")) {
+            fileName = fileName.replace("x264", "");
         }
 
-        // remove year from title
-        title = title.replaceAll("19\\d{2}|20\\d{2}", "");
+        // remove year from fileName
+        fileName = fileName.replaceAll("19\\d{2}|20\\d{2}", "");
 
         String [] patterns = new String[]{
             "(.*)s(\\d{2})\\.?e(\\d{2})\\.?e(\\d{2})(.*)",
@@ -92,10 +94,10 @@ public class VideoNameParser {
             "(.*)\\.Part\\.(\\d+)\\.(.*)"
         };
 
-        VideoSource source = VideoSource.findMatch(title);
+        VideoSource source = VideoSource.findMatch(fileName);
 
         for (String pattern:patterns) {
-            String[] groups = RegExp.parseGroups(title, pattern);
+            String[] groups = RegExp.parseGroups(fileName, pattern);
             if (groups != null) {
                 String name = getName( groups[0] );
 

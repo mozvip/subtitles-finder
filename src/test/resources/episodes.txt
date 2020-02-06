@@ -1,3 +1,4 @@
+game.of.thrones.s08e01.1080p.web.h264-memento.mkv;memento
 The.Honourable.Woman.S01E07.FASTSUB.VOSTFR.720p.HDTV.x264-ADDiCTiON.mkv;Addiction
 The.Honourable.Woman.S01E03.FASTSUB.VOSTFR.HDTV.XviD-ADDiCTiON.avi;Addiction
 The.Honourable.Woman.S01E08.FASTSUB.VOSTFR.720p.HDTV.x264-ADDiCTiON.mkv;Addiction
@@ -1544,7 +1545,7 @@ Prey.UK.S02E02.720p.HDTV.x264.mkv
 Prey.UK.S02E03.VOSTFR.720p.HDTV.x264-Visual.mkv
 prey.uk.s02e01.1080p.hdtv.x264-seriously.mkv
 Prey.2014.S01E02.VOSTFR.720p.HDTV.x264-GKS.mkv
-Prey UK S01E03 VOSTFR 720p HDTV x264-NESTA.mkv
+Prey UK S01E03 VOSTFR 720p HDTV x264-NESTA.mkv;NESTA
 Prey.2014.S01E01.VOSTFR.720p.HDTV.x264-GKS.mkv
 the.shadow.line.s01e03.720p.hdtv.x264-bia.mkv
 the.shadow.line.s01e05.720p.hdtv.x264-bia.mkv
@@ -1560,8 +1561,8 @@ Being.Human.UK.S05E05.No.Care.All.Responsibility.720p.WEB-DL.AAC2.0.H.264-ECI.mk
 being.human.s05e02.720p.hdtv.x264-river.mkv
 being_human.5x01.the_trinity.720p_hdtv_x264-fov.mkv
 Halt.And.Catch.Fire.S01E02.VOSTFR.HDTV.x264-SP3CTR3.mp4
-Halt.and.Catch.Fire.S01E01.VOSTFR.720p.WEB-DL.DD5.1.H.264-SEEHD.mkv
-Halt.and.Catch.Fire.S01E03.VOSTFR.720p.WEB-DL.DD5.1.H.264-SEEHD.mkv
+Halt.and.Catch.Fire.S01E01.VOSTFR.720p.WEB-DL.DD5.1.H.264-SEEHD.mkv;SEEHD
+Halt.and.Catch.Fire.S01E03.VOSTFR.720p.WEB-DL.DD5.1.H.264-SEEHD.mkv;SEEHD
 halt.and.catch.fire.s01e05.720p.hdtv.x264-killers.mkv
 Halt.And.Catch.Fire.S01E06.VOSTFR.HDTV.x264-SP3CTR3.mp4
 Halt.and.Catch.Fire.S01E04.VOSTFR.720p.WEB-DL.DD5.1.H.264-SEEHD.mkv

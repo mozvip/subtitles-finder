@@ -8,9 +8,9 @@ import com.github.mozvip.subtitles.model.VideoSource;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class ISubtitlesINTest {
+public class ISubtitlesOrgTest {
 	
-	private ISubtitlesIN test = new ISubtitlesIN();
+	private ISubtitlesOrg test = new ISubtitlesOrg();
 
 	@Test
 	public void testAquarius() throws Exception {

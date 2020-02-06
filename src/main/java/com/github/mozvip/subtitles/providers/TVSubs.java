@@ -25,7 +25,7 @@ public class TVSubs extends SubtitlesFinder implements EpisodeSubtitlesFinder {
 	private Map<String, String> seriesMap = new HashMap<String, String>();
 
 	public TVSubs() throws ExecutionException {
-		tvShowsDocument = getDocument(ROOT_URL + "tvshows.html", null, 1, TimeUnit.DAYS);
+		tvShowsDocument = getDocument(ROOT_URL + "tv-shows.html", null, 1, TimeUnit.DAYS);
 		Elements tvLinks = tvShowsDocument.select("ul.list1 a");
 		for (Element link : tvLinks) {
 			String href = link.attr("href");

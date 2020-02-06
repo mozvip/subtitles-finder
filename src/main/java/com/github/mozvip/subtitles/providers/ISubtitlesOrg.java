@@ -15,9 +15,9 @@ import com.github.mozvip.subtitles.SubTitlesZip;
 import com.github.mozvip.subtitles.SubtitlesFinder;
 import com.github.mozvip.subtitles.model.Release;
 
-public class ISubtitlesIN extends SubtitlesFinder implements MovieSubtitlesFinder {
+public class ISubtitlesOrg extends SubtitlesFinder implements MovieSubtitlesFinder {
 	
-	public final static String BASE_URL = "https://isubtitles.in";
+	public final static String BASE_URL = "https://isubtitles.org";
 
 	@Override
 	public RemoteSubTitles downloadMovieSubtitles(String movieName, int year, String release, VideoSource videoSource, BigDecimal fps,
@@ -41,7 +41,7 @@ public class ISubtitlesIN extends SubtitlesFinder implements MovieSubtitlesFinde
 		String movieUrl = movieLink.absUrl("href");
 		document = getDocument( movieUrl, url, 1, TimeUnit.DAYS );
 		
-		Elements rows = document.select( String.format( "tr:has(td:contains(%s))", locale.getDisplayLanguage() ));
+		Elements rows = document.select( String.format( "tr:has(td:contains(%s))", locale.getDisplayLanguage(Locale.ENGLISH) ));
 		for (Element row : rows) {
 			
 			boolean hasRelease = false;

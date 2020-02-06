@@ -25,7 +25,7 @@ public class Addic7edTest {
 	
 	@Test
 	public void testScreamQueens() throws ExecutionException {
-		final RemoteSubTitles remoteSubTitles = finder.downloadEpisodeSubtitle("Scream Queens (2015)", 2, 1, "AVS", VideoSource.WEB_DL, Locale.FRENCH);
+		final RemoteSubTitles remoteSubTitles = finder.downloadEpisodeSubtitle("Scream Queens", 2, 1, "AVS", VideoSource.WEB_DL, Locale.FRENCH);
 		Assert.assertTrue( remoteSubTitles != null && remoteSubTitles.getTitle().contains(".AVS."));
 	}
 
@@ -48,6 +48,15 @@ public class Addic7edTest {
 
 		final RemoteSubTitles remoteSubTitles = finder.downloadEpisodeSubtitle(info.getName(), info.getSeason(), info.getFirstEpisode(), info.getRelease(),info.getSource(), Locale.FRENCH);
 		Assert.assertTrue( remoteSubTitles != null && remoteSubTitles.getTitle().contains("WEB"));
+	}
+
+	@Test
+	public void testAHS() throws ExecutionException {
+
+		TVShowEpisodeInfo info = (TVShowEpisodeInfo) VideoNameParser.getVideoInfo("American.Horror.Story.S08E05.Boy.Wonder.1080p.AMZN.WEBRip.DDP5.1.x264-NTb[rarbg].mkv");
+
+		final RemoteSubTitles remoteSubTitles = finder.downloadEpisodeSubtitle(info.getName(), info.getSeason(), info.getFirstEpisode(), info.getRelease(),info.getSource(), Locale.FRENCH);
+		Assert.assertTrue( remoteSubTitles != null && remoteSubTitles.getTitle().contains("AMZN.WEB-DL"));
 	}
 
 }

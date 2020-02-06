@@ -1,17 +1,11 @@
 package com.github.mozvip.subtitles.providers;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Scanner;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.regex.MatchResult;
-
+import com.github.mozvip.subtitles.EpisodeSubtitlesFinder;
+import com.github.mozvip.subtitles.RemoteSubTitles;
 import com.github.mozvip.subtitles.SubTitleEvaluator;
+import com.github.mozvip.subtitles.SubtitlesFinder;
 import com.github.mozvip.subtitles.model.VideoSource;
+import okhttp3.Response;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -19,11 +13,10 @@ import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.mozvip.subtitles.EpisodeSubtitlesFinder;
-import com.github.mozvip.subtitles.RemoteSubTitles;
-import com.github.mozvip.subtitles.SubtitlesFinder;
-
-import okhttp3.Response;
+import java.util.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.regex.MatchResult;
 
 public class Addic7ed extends SubtitlesFinder implements EpisodeSubtitlesFinder {
 
@@ -31,39 +24,23 @@ public class Addic7ed extends SubtitlesFinder implements EpisodeSubtitlesFinder 
 
 	private final static Logger LOGGER = LoggerFactory.getLogger( Addic7ed.class );
 
-	public Addic7ed() throws ExecutionException {
-		init();
-	}
-
-	private final Map<String, String> shows = new HashMap<>();
-	
-	private String getShowId( String showName ) {
-		String name = getShowName( showName );
-		if (! shows.containsKey( name )) {
-			name = extractNameFromShowName(name);
-		}
-		return shows.get( name );
-	}
-	
 	@Override
 	public RemoteSubTitles downloadEpisodeSubtitle(String showName, int season, int episode, String release, VideoSource source, Locale locale) throws ExecutionException {
 
-		String showId = getShowId( showName );
-		if (showId == null) {
-			LOGGER.warn( "Couldn't find show {}", showName );
-			return null;
-		}
-		
+		showName = showName.replace(' ', '+');
+		String searchURL = String.format("%s/srch.php?search=%s+%02dx%02d&Submit=Search", ROOT_URL, showName, season, episode);
+		Response response;
 		try {
-			
-			String episodeLookupURL = ROOT_URL + "/re_episode.php?ep=" + showId + "-" + season + "x" + episode;
-			Response response = get( episodeLookupURL, null, 1, TimeUnit.DAYS ).get();
-			
-			String episodeUrl = response.request().url().toString();
-			
+			response = get( searchURL, ROOT_URL, 1, TimeUnit.DAYS ).get();
+		} catch (InterruptedException e) {
+			throw new ExecutionException(e);
+		}
+		String episodeUrl = response.request().url().toString();
+
+		try {
 			Document document = Jsoup.parse( response.body().string());
 	
-			String languageFullName = locale.getDisplayLanguage();
+			String languageFullName = locale.getDisplayLanguage(Locale.ENGLISH);
 	
 			Elements matchingNodes = document.select( "tr:contains("+ languageFullName + "):contains(Completed):contains(Download)" );
 			
@@ -130,21 +107,6 @@ public class Addic7ed extends SubtitlesFinder implements EpisodeSubtitlesFinder 
 		}
 		
 		return null;
-	}
-	
-	private void init() throws ExecutionException {
-		Document document = getDocument(ROOT_URL + "/shows.php", null, 1, TimeUnit.DAYS );
-		Elements showLinks = document.select( "h3 > a" );
-		for ( Element showLink : showLinks ) {
-			String show = showLink.text();
-
-			String href = showLink.absUrl("href");					
-			String showId = href.substring( href.lastIndexOf('/') + 1);
-
-			show = getShowName(show);
-			show = extractNameFromShowName(show);
-			shows.put( show, showId );
-		}		
 	}
 
 	private String getShowName(String show) {
