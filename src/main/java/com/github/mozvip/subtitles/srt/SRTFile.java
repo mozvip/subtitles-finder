@@ -90,15 +90,15 @@ public class SRTFile {
 
                 currentItem = new SRTItem();
                 currentItem.setIndex( Integer.parseInt( indexMatcher.group(1) )) ;
-            } else if (startEndMatcher.matches()) {
-                String start = startEndMatcher.group(1);
-                String end = startEndMatcher.group(2);
-
-                currentItem.setStart( LocalTime.from( formatter.parse(start) ) );
-                currentItem.setEnd( LocalTime.from( formatter.parse(end) ) );
-
-            } else {
-                currentItem.addText(line);
+            } else if (currentItem != null) {
+                if (startEndMatcher.matches()) {
+                    String start = startEndMatcher.group(1);
+                    String end = startEndMatcher.group(2);
+                    currentItem.setStart(LocalTime.from(formatter.parse(start)));
+                    currentItem.setEnd(LocalTime.from(formatter.parse(end)));
+                } else {
+                    currentItem.addText(line);
+                }
             }
         }
 

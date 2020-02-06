@@ -66,11 +66,12 @@ public class SubtitleDownloader {
 
         String badFileGlob = destinationFile.getFileName().toString();
         badFileGlob = String.format("%s.bad*", badFileGlob.replace('[', '?'));
-        DirectoryStream<Path> badFiles = Files.newDirectoryStream(parentFolder, badFileGlob);
-        for (Path badFile : badFiles) {
-            LOGGER.debug("A 'bad' file is present");
-            SRTFile badSRTFile = SRTFile.fromPath(badFile);
-            blackListedMD5s.add( badSRTFile.computeSyncMD5() );
+        try (DirectoryStream<Path> badFiles = Files.newDirectoryStream(parentFolder, badFileGlob)) {
+            for (Path badFile : badFiles) {
+                LOGGER.debug("A 'bad' file is present");
+                SRTFile badSRTFile = SRTFile.fromPath(badFile);
+                blackListedMD5s.add( badSRTFile.computeSyncMD5() );
+            }
         }
 
         VideoInfo videoInfo = VideoNameParser.getVideoInfo(path);

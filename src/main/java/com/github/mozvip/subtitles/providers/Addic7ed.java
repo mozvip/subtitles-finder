@@ -10,10 +10,11 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Scanner;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.MatchResult;
@@ -21,8 +22,6 @@ import java.util.regex.MatchResult;
 public class Addic7ed extends SubtitlesFinder implements EpisodeSubtitlesFinder {
 
 	public static final String ROOT_URL = "http://www.addic7ed.com";
-
-	private final static Logger LOGGER = LoggerFactory.getLogger( Addic7ed.class );
 
 	@Override
 	public RemoteSubTitles downloadEpisodeSubtitle(String showName, int season, int episode, String release, VideoSource source, Locale locale) throws ExecutionException {

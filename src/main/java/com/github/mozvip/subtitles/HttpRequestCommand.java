@@ -19,7 +19,7 @@ public class HttpRequestCommand extends HystrixCommand<Response> {
         cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
 
         File directory = new File("cache");
-        Cache cache = new Cache(directory, 1024 * 1024 * 250);  // 250 MB
+        Cache cache = new Cache(directory, 1024l * 1024l * 250l);  // 250 MB
 
         client = new OkHttpClient.Builder()
                 .connectTimeout(30, TimeUnit.SECONDS)
