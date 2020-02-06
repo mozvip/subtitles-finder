@@ -1,6 +1,6 @@
 package com.github.mozvip.subtitles.srt;
 
-import com.sun.org.apache.xerces.internal.impl.dv.util.HexBin;
+import org.apache.commons.codec.binary.Hex;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -118,7 +118,7 @@ public class SRTFile {
         for (SRTItem item : items) {
             md5.update(item.getSyncID());
         }
-        return HexBin.encode(md5.digest());
+        return Hex.encodeHexString(  md5.digest() );
     }
 
 }
