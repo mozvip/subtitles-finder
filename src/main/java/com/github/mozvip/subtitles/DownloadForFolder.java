@@ -16,7 +16,7 @@ import com.github.mozvip.subtitles.cli.PathConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DownloadForFolder implements Runnable {
+public class DownloadForFolder {
 
 	@Parameter(names={"-o", "-overwrite"}, description="Overwrite existing subtitles")
 	private boolean overwrite = false;
@@ -32,18 +32,31 @@ public class DownloadForFolder implements Runnable {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger( DownloadForFolder.class);
 
-	public List<Path> getContents(Path folder, Filter<Path> filter, boolean recursive) throws IOException {
+	protected boolean mustIgnore(Path path) {
+		if (ignorePatterns != null) {
+			for (String pattern: ignorePatterns) {
+				if (path.getFileName().toString().contains(pattern)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	public List<Path> getContents(Path folder, Filter<Path> filter) throws IOException {
 		List<Path> results = new ArrayList<>();
 		List<Path> folderResults = new ArrayList<>();
-		if (Files.isReadable( folder )) {
+		if (Files.isReadable( folder ) && !mustIgnore(folder)) {
 			try (DirectoryStream<Path> ds = filter != null ? Files.newDirectoryStream(folder, filter) : Files.newDirectoryStream(folder)) {
 				for (Path p : ds) {
-					folderResults.add( p );
+					if (!mustIgnore(p)) {
+						folderResults.add( p );
+					}
 				}
 			}
 			for (Path p : folderResults) {
-				if (Files.isDirectory(p, LinkOption.NOFOLLOW_LINKS) && recursive) {
-					results.addAll( getContents( p, filter, recursive) );
+				if (Files.isDirectory(p, LinkOption.NOFOLLOW_LINKS)) {
+					results.addAll( getContents( p, filter) );
 				} else {
 					results.add( p );
 				}
@@ -54,51 +67,35 @@ public class DownloadForFolder implements Runnable {
 		return results;
 	}
 
-	public static void main(String[] argv) throws IOException {
-
-		// -f \\192.168.0.201\Volume_1\series -f \\192.168.0.201\Volume_2\series -f \\192.168.0.202\Volume_1\series -f \\192.168.0.202\Volume_2\series -f \\192.168.0.203\Volume_1\series -f \\192.168.0.203\Volume_2\series -i VOST -l fr
-
-		DownloadForFolder main = new DownloadForFolder();
+	public static DownloadForFolder getInstanceFromCmdLine(String[] argv) {
+		DownloadForFolder instance = new DownloadForFolder();
 
 		JCommander.newBuilder()
-				.addObject(main)
+				.addObject(instance)
 				.build()
 				.parse(argv);
 
-		main.run();
-
+		return instance;
 	}
 
+	public static void main(String[] argv) {
+		final DownloadForFolder instance = getInstanceFromCmdLine(argv);
+		instance.run();
+	}
 
-	@Override
-	public void run() {
+	public int run() {
 		SubtitleDownloader downloader = new SubtitleDownloader();
 
 		for (Path folder: folders) {
 			LOGGER.info("Parsing source folder {}", folder.toAbsolutePath().toString());
 			List<Path> contents;
 			try {
-				contents = getContents(folder, VideoFileFilter.getInstance(), true);
+				contents = getContents(folder, VideoFileFilter.getInstance());
 			} catch (IOException e) {
 				LOGGER.error(e.getMessage(), e);
 				continue;
 			}
 			for (Path path : contents) {
-
-				boolean ignore = false;
-				if (ignorePatterns != null) {
-					for (String pattern: ignorePatterns) {
-						if (path.getFileName().toString().contains(pattern)) {
-							ignore = true;
-							break;
-						}
-					}
-				}
-
-				if (ignore) {
-					continue;
-				}
-
 				try {
 					if (downloader.findSubtitlesFor(path, locale, overwrite) != null) {
 						LOGGER.info("Successfully subtitled {} in {}", path.toAbsolutePath().toString(), locale.getLanguage());
@@ -108,6 +105,8 @@ public class DownloadForFolder implements Runnable {
 				}
 			}
 		}
+
+		return downloader.getDownloadedCount();
 	}
 
 }

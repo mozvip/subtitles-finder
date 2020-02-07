@@ -2,7 +2,6 @@ package com.github.mozvip.subtitles.srt;
 
 import com.github.mozvip.subtitles.DownloadForFolder;
 import com.github.mozvip.subtitles.DownloadForFolderTest;
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -26,7 +25,7 @@ public class SRTFileTest {
 
     @Test
     public void getContents() throws IOException, NoSuchAlgorithmException {
-        List<Path> contents = new DownloadForFolder().getContents(subTitlesPath, (Path p) -> p.getFileName().toString().endsWith(".srt"), true);
+        List<Path> contents = new DownloadForFolder().getContents(subTitlesPath, (Path p) -> p.getFileName().toString().endsWith(".srt"));
         for (Path content : contents) {
             SRTFile srt = SRTFile.fromPath(content);
             srt.computeSyncMD5();

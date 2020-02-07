@@ -13,6 +13,7 @@ import java.security.NoSuchAlgorithmException;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
+import java.time.format.SignStyle;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -33,7 +34,7 @@ public class SRTFile {
             .appendValue(MINUTE_OF_HOUR, 2)
             .optionalStart()
             .appendLiteral(':')
-            .appendValue(SECOND_OF_MINUTE, 2)
+            .appendValue(SECOND_OF_MINUTE, 1, 2, SignStyle.NEVER)
             .optionalStart()
             .appendLiteral(',')
             .appendFraction(MILLI_OF_SECOND, 0, 3, false)

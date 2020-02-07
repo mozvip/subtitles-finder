@@ -25,6 +25,8 @@ public class SubtitleDownloader {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(SubtitleDownloader.class);
 
+    private int downloadedCount = 0;
+
     Set<Class<? extends FileHashSubtitlesFinder>> fileHashSubtitlesFinders;
     Set<Class<? extends MovieSubtitlesFinder>> movieSubtitlesFinders;
     Set<Class<? extends EpisodeSubtitlesFinder>> episodeSubtitlesFinders;
@@ -144,10 +146,14 @@ public class SubtitleDownloader {
             try (OutputStream output = Files.newOutputStream(destinationFile)) {
                 output.write(currentSubTitles.getData());
             }
+
+            downloadedCount++;
         }
 
         return currentSubTitles;
     }
 
-
+    public int getDownloadedCount() {
+        return downloadedCount;
+    }
 }

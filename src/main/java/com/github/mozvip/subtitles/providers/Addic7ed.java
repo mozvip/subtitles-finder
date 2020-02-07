@@ -24,7 +24,7 @@ public class Addic7ed extends SubtitlesFinder implements EpisodeSubtitlesFinder 
 	public static final String ROOT_URL = "http://www.addic7ed.com";
 
 	@Override
-	public RemoteSubTitles downloadEpisodeSubtitle(String showName, int season, int episode, String release, VideoSource source, Locale locale) throws ExecutionException {
+	public RemoteSubTitles downloadEpisodeSubtitle(String showName, int season, int episode, String release, VideoSource source, Locale locale) throws InterruptedException, ExecutionException {
 
 		showName = showName.replace(' ', '+');
 		String searchURL = String.format("%s/srch.php?search=%s+%02dx%02d&Submit=Search", ROOT_URL, showName, season, episode);
@@ -32,7 +32,7 @@ public class Addic7ed extends SubtitlesFinder implements EpisodeSubtitlesFinder 
 		try {
 			response = get( searchURL, ROOT_URL, 1, TimeUnit.DAYS ).get();
 		} catch (InterruptedException e) {
-			throw new ExecutionException(e);
+			throw e;
 		}
 		String episodeUrl = response.request().url().toString();
 

@@ -26,12 +26,14 @@ public class DownloadForFolderTest {
 
     @Test
     public void getContents() throws IOException {
-        List<Path> contents = new DownloadForFolder().getContents(videoPath, (Path p) -> true, true);
+        List<Path> contents = new DownloadForFolder().getContents(videoPath, (Path p) -> true);
         Assert.assertTrue(contents != null && contents.size() > 0);
     }
 
     @Test
-    public void main() throws IOException {
-        DownloadForFolder.main(  new String[]{"-f", videoPath.toAbsolutePath().toString(), "-i", "VOSTFR", "-l", "fr", "-o"} );
+    public void testDownloadSubtitles() throws IOException {
+        final DownloadForFolder instance = DownloadForFolder.getInstanceFromCmdLine(new String[]{"-f", videoPath.toAbsolutePath().toString(), "-i", "VOSTFR", "-l", "fr", "-o"});
+        final int downloaded = instance.run();
+        Assert.assertEquals(5, downloaded);
     }
 }

@@ -24,25 +24,25 @@ public class Addic7edTest {
 	}
 	
 	@Test
-	public void testScreamQueens() throws ExecutionException {
+	public void testScreamQueens() throws InterruptedException, ExecutionException {
 		final RemoteSubTitles remoteSubTitles = finder.downloadEpisodeSubtitle("Scream Queens", 2, 1, "AVS", VideoSource.WEB_DL, Locale.FRENCH);
 		Assert.assertTrue( remoteSubTitles != null && remoteSubTitles.getTitle().contains(".AVS."));
 	}
 
 	@Test
-	public void testGot() throws ExecutionException {
+	public void testGot() throws InterruptedException, ExecutionException {
 		final RemoteSubTitles remoteSubTitles = finder.downloadEpisodeSubtitle("Game of Thrones", 2, 1, "ASAP", VideoSource.HDTV,  Locale.FRENCH);
 		Assert.assertTrue( remoteSubTitles != null && remoteSubTitles.getTitle().contains(".ASAP."));
 	}
 
 	@Test
-	public void testShadesOfBlue() throws ExecutionException {
+	public void testShadesOfBlue() throws InterruptedException, ExecutionException {
 		final RemoteSubTitles remoteSubTitles = finder.downloadEpisodeSubtitle("Shades of Blue", 1, 5, "AVS", VideoSource.HDTV, Locale.FRENCH);
 		Assert.assertTrue( remoteSubTitles != null && remoteSubTitles.getTitle().contains(".AVS."));
 	}
 
 	@Test
-	public void testWalking() throws ExecutionException {
+	public void testWalking() throws InterruptedException, ExecutionException {
 
 		TVShowEpisodeInfo info = (TVShowEpisodeInfo) VideoNameParser.getVideoInfo("The.Walking.Dead.S08E01.REPACK.CONVERT.1080p.WEB.h264-TBS[rarbg].mkv");
 
@@ -51,7 +51,7 @@ public class Addic7edTest {
 	}
 
 	@Test
-	public void testAHS() throws ExecutionException {
+	public void testAHS() throws InterruptedException, ExecutionException {
 
 		TVShowEpisodeInfo info = (TVShowEpisodeInfo) VideoNameParser.getVideoInfo("American.Horror.Story.S08E05.Boy.Wonder.1080p.AMZN.WEBRip.DDP5.1.x264-NTb[rarbg].mkv");
 
