@@ -71,22 +71,7 @@ public class SousTitresEU extends SubtitlesFinder implements EpisodeSubtitlesFin
 
 		for (Element node : nodes) {
 
-			// gets parent node (TR)
-			Element tableRow = node.parent();
-			Elements flagImageNodes = tableRow.select("img");
-
-			boolean hasLanguage = false;
-			for (Element flagImageNode : flagImageNodes) {
-				String lang = flagImageNode.attr("title");
-				if (StringUtils.equalsIgnoreCase(lang, locale.getLanguage())) {
-					hasLanguage = true;
-					break;
-				}
-			}
-
-			if (!hasLanguage) {
-				continue;
-			}
+			if (shouldIgnore(locale, node)) continue;
 
 			String text = node.text();
 
@@ -131,6 +116,26 @@ public class SousTitresEU extends SubtitlesFinder implements EpisodeSubtitlesFin
 
 	}
 
+	private boolean shouldIgnore(Locale locale, Element node) {
+		// gets parent node (TR)
+		Element tableRow = node.parent();
+		Elements flagImageNodes = tableRow.select("img");
+
+		boolean hasLanguage = false;
+		for (Element flagImageNode : flagImageNodes) {
+			String lang = flagImageNode.attr("title");
+			if (StringUtils.equalsIgnoreCase(lang, locale.getLanguage())) {
+				hasLanguage = true;
+				break;
+			}
+		}
+
+		if (!hasLanguage) {
+			return true;
+		}
+		return false;
+	}
+
 	@Override
 	public RemoteSubTitles downloadMovieSubtitles(String movieName, int year, String release, VideoSource videoSource, BigDecimal fps,
 			Locale locale) throws ExecutionException {
@@ -145,22 +150,7 @@ public class SousTitresEU extends SubtitlesFinder implements EpisodeSubtitlesFin
 
 		for (Element node : nodes) {
 
-			// gets parent node (TR)
-			Element tableRow = node.parent();
-			Elements flagImageNodes = tableRow.select("img");
-
-			boolean hasLanguage = false;
-			for (Element flagImageNode : flagImageNodes) {
-				String lang = flagImageNode.attr("title");
-				if (StringUtils.equalsIgnoreCase(lang, locale.getLanguage())) {
-					hasLanguage = true;
-					break;
-				}
-			}
-
-			if (!hasLanguage) {
-				continue;
-			}
+			if (shouldIgnore(locale, node)) break;
 
 			Element link = node.parent();
 			String href = link.absUrl("href");
