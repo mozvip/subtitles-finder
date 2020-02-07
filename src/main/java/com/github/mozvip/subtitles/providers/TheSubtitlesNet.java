@@ -20,12 +20,12 @@ public class TheSubtitlesNet extends SubtitlesFinder implements EpisodeSubtitles
 
 
     @Override
-    public RemoteSubTitles downloadEpisodeSubtitle(String showName, int season, int episode, String release, VideoSource source, Locale locale) throws ExecutionException {
+    public RemoteSubTitles downloadEpisodeSubtitle(String showName, int season, int episode, String release, VideoSource source, Locale locale) throws InterruptedException, ExecutionException {
         return null;
     }
 
     @Override
-    public RemoteSubTitles downloadMovieSubtitles(String movieName, int year, String release, VideoSource source, BigDecimal fps, Locale locale) throws Exception {
+    public RemoteSubTitles downloadMovieSubtitles(String movieName, int year, String release, VideoSource source, BigDecimal fps, Locale locale) throws InterruptedException, ExecutionException {
 
         return null;
     }

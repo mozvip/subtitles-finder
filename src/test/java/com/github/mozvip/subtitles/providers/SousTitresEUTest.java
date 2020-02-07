@@ -25,44 +25,44 @@ public class SousTitresEUTest extends AbstractSubtitleFinderTest {
 	}
 	
 	@Test
-	public void testScreamQueens() throws ExecutionException {
+	public void testScreamQueens() throws InterruptedException, ExecutionException {
 		RemoteSubTitles remoteSubTitles = finder.downloadEpisodeSubtitle("Scream Queens (2015)", 2, 1, "AVS", VideoSource.HDTV, Locale.FRENCH);
 		Assert.assertTrue(remoteSubTitles != null && StringUtils.containsIgnoreCase(remoteSubTitles.getTitle(), "Netflix"));
 	}
 
 	@Test
-	public void testLeftovers() throws ExecutionException {
+	public void testLeftovers() throws InterruptedException, ExecutionException {
 		RemoteSubTitles remoteSubTitles = finder.downloadEpisodeSubtitle("The Leftovers", 3, 1, "KILLERS", VideoSource.HDTV, Locale.FRENCH);
 		Assert.assertTrue(remoteSubTitles != null && remoteSubTitles.getTitle().contains("KILLERS"));
 	}
 
 	@Test
-	public void testGot() throws ExecutionException {
+	public void testGot() throws InterruptedException, ExecutionException {
 		RemoteSubTitles remoteSubTitles = finder.downloadEpisodeSubtitle("Game of Thrones", 2, 1, "IMMERSE", VideoSource.HDTV, Locale.FRENCH);
 		Assert.assertTrue(remoteSubTitles != null && StringUtils.containsIgnoreCase(remoteSubTitles.getTitle(), ".imm."));
 	}
 
 	@Test
-	public void testMovie() throws ExecutionException {
+	public void testMovie() throws InterruptedException, ExecutionException {
 	    String release = "GECKOS";
         RemoteSubTitles remoteSubTitles = finder.downloadMovieSubtitles("Wind River", 2017, release, VideoSource.BLURAY, new BigDecimal(25.0f), Locale.FRENCH);
         Assert.assertTrue(remoteSubTitles != null && StringUtils.containsIgnoreCase(remoteSubTitles.getTitle(), release));
 	}
 
 	@Test
-	public void testNotFound() throws Exception {
+	public void testNotFound() throws InterruptedException, ExecutionException {
 		RemoteSubTitles remoteSubTitles = finder.downloadMovieSubtitles("thismoviedoesnotexist", 2017, "FOV", VideoSource.HDTV, BigDecimal.valueOf(25.0), Locale.FRENCH);
 		Assert.assertTrue( remoteSubTitles == null);
 	}
 
 	@Test
-	public void testShowNotFound() throws Exception {
+	public void testShowNotFound() throws InterruptedException, ExecutionException {
 		RemoteSubTitles remoteSubTitles = finder.downloadEpisodeSubtitle("thisshowdoesnotexist", 1, 1, "IMMERSE", VideoSource.HDTV, Locale.FRENCH);
 		Assert.assertTrue( remoteSubTitles == null);
 	}
 
 	@Test
-	public void testUnsupportedLanguage() throws Exception {
+	public void testUnsupportedLanguage() throws InterruptedException, ExecutionException {
 		RemoteSubTitles remoteSubTitles = finder.downloadEpisodeSubtitle("Game of Thrones", 2, 1, "IMMERSE", VideoSource.HDTV, Locale.CHINESE);
 		Assert.assertTrue( remoteSubTitles == null);
 	}

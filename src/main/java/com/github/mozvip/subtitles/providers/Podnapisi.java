@@ -58,7 +58,7 @@ public class Podnapisi extends SubtitlesFinder implements EpisodeSubtitlesFinder
 
 	@Override
 	public RemoteSubTitles downloadMovieSubtitles(String movieName, int year, String release, VideoSource videoSource, BigDecimal fps, Locale locale)
-			throws Exception {
+			throws InterruptedException, ExecutionException {
 		String queryString = movieName.toLowerCase();
 		if (StringUtils.contains(queryString, "(")) {
 			queryString = StringUtils.substringBefore(queryString, "(") + StringUtils.substringAfter(queryString, ")");

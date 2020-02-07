@@ -33,7 +33,7 @@ public class SousTitresEU extends SubtitlesFinder implements EpisodeSubtitlesFin
 
 	@Override
 	public RemoteSubTitles downloadEpisodeSubtitle(String showName, int season, int episode, String release, VideoSource source,
-			Locale locale) throws ExecutionException {
+			Locale locale) throws InterruptedException, ExecutionException {
 
 		String seriesName = showName.toLowerCase();
 
@@ -42,15 +42,11 @@ public class SousTitresEU extends SubtitlesFinder implements EpisodeSubtitlesFin
 			seriesName = matcher.group(1);
 		}
 
-		String url = null;
+		seriesName = seriesName.replace(' ', '_');
+		seriesName = seriesName.replaceAll("\\(\\):\\.", "");
+		String url = seriesName;
 
-		if (url == null) {
-			seriesName = seriesName.replace(' ', '_');
-			seriesName = seriesName.replaceAll("\\(\\):\\.", "");
-			url = seriesName;
-
-			url = ROOT_URL + "/series/" + url + ".html";
-		}
+		url = ROOT_URL + "/series/" + url + ".html";
 
 		Document document;
 		Elements nodes;
@@ -61,7 +57,9 @@ public class SousTitresEU extends SubtitlesFinder implements EpisodeSubtitlesFin
 				return null;
 			}
 			document = Jsoup.parse(response.body().string(), url);
-		} catch (InterruptedException | IOException e) {
+		} catch (InterruptedException e) {
+			throw e;
+		} catch (IOException e) {
 			throw new ExecutionException(e);
 		}
 
@@ -138,7 +136,7 @@ public class SousTitresEU extends SubtitlesFinder implements EpisodeSubtitlesFin
 
 	@Override
 	public RemoteSubTitles downloadMovieSubtitles(String movieName, int year, String release, VideoSource videoSource, BigDecimal fps,
-			Locale locale) throws ExecutionException {
+			Locale locale) throws InterruptedException, ExecutionException {
 
 		String url = String.format("%s/search.html?q=%s+%d", ROOT_URL, movieName, year);
 

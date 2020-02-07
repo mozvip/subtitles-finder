@@ -8,6 +8,6 @@ import java.util.concurrent.ExecutionException;
 
 public interface EpisodeSubtitlesFinder {
 
-	public RemoteSubTitles downloadEpisodeSubtitle(String showName, int season, int episode, String release, VideoSource source, Locale locale) throws ExecutionException;
+	RemoteSubTitles downloadEpisodeSubtitle(String showName, int season, int episode, String release, VideoSource source, Locale locale) throws InterruptedException, ExecutionException;
 
 }

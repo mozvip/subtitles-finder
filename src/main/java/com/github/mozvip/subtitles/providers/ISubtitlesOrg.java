@@ -1,19 +1,20 @@
 package com.github.mozvip.subtitles.providers;
 
-import java.math.BigDecimal;
-import java.util.Locale;
-import java.util.concurrent.TimeUnit;
-
-import com.github.mozvip.subtitles.model.VideoSource;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-
 import com.github.mozvip.subtitles.MovieSubtitlesFinder;
 import com.github.mozvip.subtitles.RemoteSubTitles;
 import com.github.mozvip.subtitles.SubTitlesZip;
 import com.github.mozvip.subtitles.SubtitlesFinder;
 import com.github.mozvip.subtitles.model.Release;
+import com.github.mozvip.subtitles.model.VideoSource;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.Locale;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 public class ISubtitlesOrg extends SubtitlesFinder implements MovieSubtitlesFinder {
 	
@@ -21,7 +22,7 @@ public class ISubtitlesOrg extends SubtitlesFinder implements MovieSubtitlesFind
 
 	@Override
 	public RemoteSubTitles downloadMovieSubtitles(String movieName, int year, String release, VideoSource videoSource, BigDecimal fps,
-												  Locale locale) throws Exception {
+												  Locale locale) throws InterruptedException, ExecutionException {
 		
 		Release releaseGroup = Release.firstMatch( release );
 		
@@ -59,11 +60,15 @@ public class ISubtitlesOrg extends SubtitlesFinder implements MovieSubtitlesFind
 			if (hasRelease) {
 
 				String downloadUrl = row.select("a[href*=download]").first().absUrl("href");
-				byte[] zipData = get(downloadUrl, movieUrl).get().body().bytes();
-				
-				RemoteSubTitles subtitles = SubTitlesZip.selectBestSubtitlesFromZip(this, zipData, release, videoSource, locale);
-				subtitles.setScore( 10 );
-				return subtitles;
+
+				try {
+					byte[] zipData = get(downloadUrl, movieUrl).get().body().bytes();
+					RemoteSubTitles subtitles = SubTitlesZip.selectBestSubtitlesFromZip(this, zipData, release, videoSource, locale);
+					subtitles.setScore(10);
+					return subtitles;
+				} catch (IOException e) {
+					throw new ExecutionException(e);
+				}
 			}
 		}
 
