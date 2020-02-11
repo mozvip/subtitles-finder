@@ -11,10 +11,6 @@ public class SubTitleFinderFactory {
 
     private static Map<String, String> env = System.getenv();
 
-    public static void setEnv(Map<String, String> env) {
-        SubTitleFinderFactory.env = env;
-    }
-
     private SubTitleFinderFactory() {}
 
     public static <T> T createInstance(Class<? extends T> finderClass) throws InvocationTargetException, IllegalAccessException, InstantiationException, NoSuchMethodException {

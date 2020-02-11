@@ -23,8 +23,8 @@ public class PodnapisiTest {
 
 	@Test
 	public void testGot() throws ExecutionException {
-		RemoteSubTitles remoteSubTitles = finder.downloadEpisodeSubtitle("Game of Thrones", 2, 1, "IMMERSE", VideoSource.HDTV, Locale.FRENCH);
-		Assert.assertTrue(remoteSubTitles != null);
+		RemoteSubTitles remoteSubTitles = finder.downloadEpisodeSubtitle("Game of Thrones", 2, 1, "FQM", VideoSource.HDTV, Locale.FRENCH);
+		Assert.assertTrue(remoteSubTitles != null && remoteSubTitles.getTitle().contains("FQM"));
 	}
 
 	@Test
@@ -36,7 +36,7 @@ public class PodnapisiTest {
 	@Test
 	public void testMovie() throws Exception {
 		RemoteSubTitles remoteSubTitles = finder.downloadMovieSubtitles("Girl Lost", 2018, "AMZN", VideoSource.WEB_DL, BigDecimal.valueOf(23.976), Locale.ENGLISH);
-		Assert.assertTrue(remoteSubTitles != null);
+		Assert.assertTrue(remoteSubTitles != null && remoteSubTitles.getTitle().contains("AMZN"));
 	}
 
 

@@ -108,13 +108,4 @@ public class Addic7ed extends SubtitlesFinder implements EpisodeSubtitlesFinder 
 		return null;
 	}
 
-	private String getShowName(String show) {
-		show = show.toLowerCase();
-		show = show.replaceAll("[\\s',!\\?]", "");
-		show = show.replaceAll("\\((19\\d{2}|20\\d{2})\\)", "");
-		show = show.replaceAll("\\s+", " ");
-		show = show.trim();
-		return show;
-	}
-
 }

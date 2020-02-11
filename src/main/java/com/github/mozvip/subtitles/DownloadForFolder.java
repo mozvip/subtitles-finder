@@ -79,8 +79,7 @@ public class DownloadForFolder {
 	}
 
 	public static void main(String[] argv) {
-		final DownloadForFolder instance = getInstanceFromCmdLine(argv);
-		instance.run();
+		getInstanceFromCmdLine(argv).run();
 	}
 
 	public int run() {

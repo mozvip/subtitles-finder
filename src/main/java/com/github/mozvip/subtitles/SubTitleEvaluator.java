@@ -19,11 +19,12 @@ public class SubTitleEvaluator {
 
     public static int evaluateSubtitleForRelease(SubtitlesFinder sourceFinder, String subtitleName, List<String> compatibleReleases, Locale desiredLocale, String videoRelease, VideoSource source) {
 
-        if ((StringUtils.containsIgnoreCase(subtitleName, ".VF.") || StringUtils.containsIgnoreCase(subtitleName, ".FR.") || StringUtils.containsIgnoreCase(subtitleName, ".FR-") ) && !desiredLocale.getLanguage().equals("fr")) {
+        final String desiredLanguage = desiredLocale.getLanguage();
+        if ((StringUtils.containsIgnoreCase(subtitleName, ".VF.") || StringUtils.containsIgnoreCase(subtitleName, ".FR.") || StringUtils.containsIgnoreCase(subtitleName, ".FR-") ) && !desiredLanguage.equals("fr")) {
             return -1;
         }
 
-        if ((StringUtils.containsIgnoreCase(subtitleName, ".EN.") || StringUtils.containsIgnoreCase(subtitleName, ".EN-") || StringUtils.containsIgnoreCase(subtitleName, ".VO-") || StringUtils.containsIgnoreCase(subtitleName, ".VO.") || StringUtils.containsIgnoreCase(subtitleName, ".VOsync.") ) && !desiredLocale.getLanguage().equals("en")) {
+        if ((StringUtils.containsIgnoreCase(subtitleName, ".EN.") || StringUtils.containsIgnoreCase(subtitleName, ".EN-") || StringUtils.containsIgnoreCase(subtitleName, ".VO-") || StringUtils.containsIgnoreCase(subtitleName, ".VO.") || StringUtils.containsIgnoreCase(subtitleName, ".VOsync.") ) && !desiredLanguage.equals("en")) {
             return -1;
         }
 
