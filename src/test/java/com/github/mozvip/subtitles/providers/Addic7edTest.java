@@ -1,15 +1,12 @@
 package com.github.mozvip.subtitles.providers;
 
-import java.io.IOException;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
-import com.github.mozvip.subtitles.RemoteSubTitles;
+import com.github.mozvip.subtitles.utils.RemoteSubTitles;
 import com.github.mozvip.subtitles.model.TVShowEpisodeInfo;
-import com.github.mozvip.subtitles.model.VideoInfo;
 import com.github.mozvip.subtitles.model.VideoNameParser;
 import com.github.mozvip.subtitles.model.VideoSource;
-import com.github.mozvip.subtitles.providers.Addic7ed;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;

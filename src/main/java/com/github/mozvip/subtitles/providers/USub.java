@@ -14,11 +14,10 @@ import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.mozvip.subtitles.EpisodeSubtitlesFinder;
-import com.github.mozvip.subtitles.RemoteSubTitles;
-import com.github.mozvip.subtitles.SubTitlesUtils;
-import com.github.mozvip.subtitles.SubTitlesZip;
-import com.github.mozvip.subtitles.SubtitlesFinder;
+import com.github.mozvip.subtitles.utils.RemoteSubTitles;
+import com.github.mozvip.subtitles.utils.SubTitlesUtils;
+import com.github.mozvip.subtitles.utils.SubTitlesZip;
+import com.github.mozvip.subtitles.utils.SubtitlesFinder;
 
 public class USub extends SubtitlesFinder implements EpisodeSubtitlesFinder {
 	

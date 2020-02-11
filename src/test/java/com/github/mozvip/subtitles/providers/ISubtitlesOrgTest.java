@@ -3,7 +3,7 @@ package com.github.mozvip.subtitles.providers;
 import java.math.BigDecimal;
 import java.util.Locale;
 
-import com.github.mozvip.subtitles.RemoteSubTitles;
+import com.github.mozvip.subtitles.utils.RemoteSubTitles;
 import com.github.mozvip.subtitles.model.VideoSource;
 import org.junit.Assert;
 import org.junit.Test;

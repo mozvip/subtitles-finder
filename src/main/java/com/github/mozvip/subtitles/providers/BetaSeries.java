@@ -3,14 +3,14 @@ package com.github.mozvip.subtitles.providers;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Locale;
-import java.util.Scanner;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.MatchResult;
 
-import com.github.mozvip.subtitles.*;
 import com.github.mozvip.subtitles.model.VideoSource;
-import okhttp3.HttpUrl;
+import com.github.mozvip.subtitles.utils.RemoteSubTitles;
+import com.github.mozvip.subtitles.utils.SubTitleEvaluator;
+import com.github.mozvip.subtitles.utils.SubTitlesZip;
+import com.github.mozvip.subtitles.utils.SubtitlesFinder;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -69,7 +69,7 @@ public class BetaSeries extends SubtitlesFinder implements EpisodeSubtitlesFinde
 
 	@Override
 	public RemoteSubTitles downloadEpisodeSubtitle(String showName, int season, int episode, String release, VideoSource source,
-			Locale locale) throws ExecutionException {
+												   Locale locale) throws ExecutionException {
 
 		Element element = getEpisodeElement(showName, season, episode);
 		if (element == null) {

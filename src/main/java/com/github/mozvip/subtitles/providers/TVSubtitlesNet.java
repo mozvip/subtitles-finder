@@ -7,8 +7,8 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-import com.github.mozvip.subtitles.*;
 import com.github.mozvip.subtitles.model.VideoSource;
+import com.github.mozvip.subtitles.utils.*;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -17,8 +17,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class TVSubtitlesNet extends SubtitlesFinder implements EpisodeSubtitlesFinder {
-	
-	private final static Logger LOGGER = LoggerFactory.getLogger( TVSubtitlesNet.class );
+
+	private static final Logger LOGGER = LoggerFactory.getLogger( TVSubtitlesNet.class );
 
 	private static Map<String, String> seriesMap;
 
@@ -32,7 +32,7 @@ public class TVSubtitlesNet extends SubtitlesFinder implements EpisodeSubtitlesF
 		Elements tvLinks = tvShowsDocument.select("#table5 a");
 		for ( Element link : tvLinks ) {
 			String href = link.attr("href");
-			href = href.substring( href.indexOf("-") + 1, href.lastIndexOf("-"));
+			href = href.substring( href.indexOf('-') + 1, href.lastIndexOf('-'));
 			String seriesName = link.text().toLowerCase();
 			if (StringUtils.isNotBlank( seriesName )) {
 				seriesMap.put( seriesName, href );
@@ -47,7 +47,7 @@ public class TVSubtitlesNet extends SubtitlesFinder implements EpisodeSubtitlesF
 		
 		showName = extractNameFromShowName(showName).toLowerCase();
 		if (!seriesMap.containsKey( showName )) {
-			LOGGER.warn("Show " + showName + " not found");
+			LOGGER.warn("Show {} not found", showName);
 			return null;
 		}
 		
@@ -58,7 +58,6 @@ public class TVSubtitlesNet extends SubtitlesFinder implements EpisodeSubtitlesF
 
 		int maxScore = -100;
 		Element selectedSubtitle = null;
-		String subTitlesURL = null;
 
 		for (Element row : rows) {
 			if (row.select("td").isEmpty()) {
@@ -68,7 +67,7 @@ public class TVSubtitlesNet extends SubtitlesFinder implements EpisodeSubtitlesF
 			if (!SubTitlesUtils.isExactMatch(episodeStr, season, episode)) {
 				continue;
 			}
-			subTitlesURL = row.select("a").first().absUrl("href");
+			String subTitlesURL = row.select("a").first().absUrl("href");
 			document = getDocument( subTitlesURL, null, 1, TimeUnit.DAYS );
 			
 			Elements subtitles = document.select( String.format( "a:has(h5 img[src*=%s])", locale.getLanguage() ));

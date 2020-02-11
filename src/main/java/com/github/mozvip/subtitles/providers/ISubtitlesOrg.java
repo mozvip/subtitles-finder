@@ -1,9 +1,8 @@
 package com.github.mozvip.subtitles.providers;
 
-import com.github.mozvip.subtitles.MovieSubtitlesFinder;
-import com.github.mozvip.subtitles.RemoteSubTitles;
-import com.github.mozvip.subtitles.SubTitlesZip;
-import com.github.mozvip.subtitles.SubtitlesFinder;
+import com.github.mozvip.subtitles.utils.RemoteSubTitles;
+import com.github.mozvip.subtitles.utils.SubTitlesZip;
+import com.github.mozvip.subtitles.utils.SubtitlesFinder;
 import com.github.mozvip.subtitles.model.Release;
 import com.github.mozvip.subtitles.model.VideoSource;
 import org.jsoup.nodes.Document;

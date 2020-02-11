@@ -1,9 +1,7 @@
 package com.github.mozvip.subtitles.providers;
 
-import com.github.mozvip.subtitles.EpisodeSubtitlesFinder;
-import com.github.mozvip.subtitles.MovieSubtitlesFinder;
-import com.github.mozvip.subtitles.RemoteSubTitles;
-import com.github.mozvip.subtitles.SubtitlesFinder;
+import com.github.mozvip.subtitles.utils.RemoteSubTitles;
+import com.github.mozvip.subtitles.utils.SubtitlesFinder;
 import com.github.mozvip.subtitles.model.VideoSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

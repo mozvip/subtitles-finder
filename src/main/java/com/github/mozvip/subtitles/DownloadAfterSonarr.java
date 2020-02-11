@@ -1,5 +1,7 @@
 package com.github.mozvip.subtitles;
 
+import com.github.mozvip.subtitles.utils.RemoteSubTitles;
+import com.github.mozvip.subtitles.utils.SubtitleDownloader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

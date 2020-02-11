@@ -1,9 +1,8 @@
 package com.github.mozvip.subtitles.providers;
 
-import com.github.mozvip.subtitles.RemoteSubTitles;
+import com.github.mozvip.subtitles.utils.RemoteSubTitles;
 import org.junit.Test;
 
-import java.net.MalformedURLException;
 import java.util.Locale;
 
 import static org.junit.Assert.*;

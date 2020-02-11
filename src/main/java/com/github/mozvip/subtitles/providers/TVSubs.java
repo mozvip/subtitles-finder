@@ -7,8 +7,8 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-import com.github.mozvip.subtitles.*;
 import com.github.mozvip.subtitles.model.VideoSource;
+import com.github.mozvip.subtitles.utils.*;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -42,7 +42,7 @@ public class TVSubs extends SubtitlesFinder implements EpisodeSubtitlesFinder {
 
 	@Override
 	public RemoteSubTitles downloadEpisodeSubtitle(String showName, int season, int episode, String release, VideoSource source,
-			Locale locale) throws ExecutionException {
+												   Locale locale) throws ExecutionException {
 
 		String seriesId = getSeriesId( showName );
 		if (seriesId == null) {

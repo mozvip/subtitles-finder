@@ -13,9 +13,8 @@ import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.mozvip.subtitles.FileHashSubtitlesFinder;
-import com.github.mozvip.subtitles.RemoteSubTitles;
-import com.github.mozvip.subtitles.SubtitlesFinder;
+import com.github.mozvip.subtitles.utils.RemoteSubTitles;
+import com.github.mozvip.subtitles.utils.SubtitlesFinder;
 
 public class OpenSubtitlesOrg extends SubtitlesFinder implements FileHashSubtitlesFinder {
 

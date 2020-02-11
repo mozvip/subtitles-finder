@@ -1,12 +1,10 @@
 package com.github.mozvip.subtitles.model;
 
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Scanner;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.github.mozvip.subtitles.RegExp;
+import com.github.mozvip.subtitles.utils.RegExp;
 
 public class VideoNameParser {
 

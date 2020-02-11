@@ -1,5 +1,6 @@
 package com.github.mozvip.subtitles;
 
+import com.github.mozvip.subtitles.utils.RemoteSubTitles;
 import org.junit.Assert;
 import org.junit.Test;
 

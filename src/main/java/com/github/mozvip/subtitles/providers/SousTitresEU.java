@@ -18,18 +18,16 @@ import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.mozvip.subtitles.EpisodeSubtitlesFinder;
-import com.github.mozvip.subtitles.MovieSubtitlesFinder;
-import com.github.mozvip.subtitles.RemoteSubTitles;
-import com.github.mozvip.subtitles.SubTitlesUtils;
-import com.github.mozvip.subtitles.SubTitlesZip;
-import com.github.mozvip.subtitles.SubtitlesFinder;
+import com.github.mozvip.subtitles.utils.RemoteSubTitles;
+import com.github.mozvip.subtitles.utils.SubTitlesUtils;
+import com.github.mozvip.subtitles.utils.SubTitlesZip;
+import com.github.mozvip.subtitles.utils.SubtitlesFinder;
 
 public class SousTitresEU extends SubtitlesFinder implements EpisodeSubtitlesFinder, MovieSubtitlesFinder {
 
-	private final static Logger LOGGER = LoggerFactory.getLogger(SousTitresEU.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(SousTitresEU.class);
 
-	private final static String ROOT_URL = "http://www.sous-titres.eu";
+	private static final String ROOT_URL = "http://www.sous-titres.eu";
 
 	@Override
 	public RemoteSubTitles downloadEpisodeSubtitle(String showName, int season, int episode, String release, VideoSource source,
@@ -53,7 +51,7 @@ public class SousTitresEU extends SubtitlesFinder implements EpisodeSubtitlesFin
 		RemoteSubTitles bestSubTitles;
 		try (Response response = get(url, null, 1, TimeUnit.DAYS).get()) {
 			if (response.code() == 404) {
-				LOGGER.warn(String.format("Couldn't find show %s", showName));
+				LOGGER.warn("Couldn't find show {}}", showName);
 				return null;
 			}
 			document = Jsoup.parse(response.body().string(), url);
@@ -105,7 +103,6 @@ public class SousTitresEU extends SubtitlesFinder implements EpisodeSubtitlesFin
 					}
 				} catch (IOException e) {
 					LOGGER.error(e.getMessage(), e);
-					continue;
 				}
 			}
 		}
@@ -128,10 +125,7 @@ public class SousTitresEU extends SubtitlesFinder implements EpisodeSubtitlesFin
 			}
 		}
 
-		if (!hasLanguage) {
-			return true;
-		}
-		return false;
+		return (!hasLanguage);
 	}
 
 	@Override
@@ -156,10 +150,8 @@ public class SousTitresEU extends SubtitlesFinder implements EpisodeSubtitlesFin
 			try {
 				byte[] bytes = getBytes(href, url);			
 				RemoteSubTitles currentRemoteSubTitles = SubTitlesZip.selectBestSubtitlesFromZip(this, bytes, release, videoSource, locale);
-				if (currentRemoteSubTitles != null) {
-					if (bestSubTitles == null || currentRemoteSubTitles.getScore() > bestSubTitles.getScore()) {
-						bestSubTitles = currentRemoteSubTitles;
-					}
+				if (currentRemoteSubTitles != null && (bestSubTitles == null || currentRemoteSubTitles.getScore() > bestSubTitles.getScore())) {
+					bestSubTitles = currentRemoteSubTitles;
 				}
 			} catch (IOException e) {
 				LOGGER.error( e.getMessage(), e );

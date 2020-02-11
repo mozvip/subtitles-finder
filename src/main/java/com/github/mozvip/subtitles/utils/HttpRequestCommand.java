@@ -1,4 +1,4 @@
-package com.github.mozvip.subtitles;
+package com.github.mozvip.subtitles.utils;
 
 import com.netflix.hystrix.*;
 import okhttp3.*;

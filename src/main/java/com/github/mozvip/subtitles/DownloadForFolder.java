@@ -13,6 +13,8 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.github.mozvip.subtitles.cli.LocaleConverter;
 import com.github.mozvip.subtitles.cli.PathConverter;
+import com.github.mozvip.subtitles.utils.SubtitleDownloader;
+import com.github.mozvip.subtitles.utils.VideoFileFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

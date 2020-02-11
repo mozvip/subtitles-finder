@@ -1,6 +1,6 @@
 package com.github.mozvip.subtitles.providers;
 
-import com.github.mozvip.subtitles.RemoteSubTitles;
+import com.github.mozvip.subtitles.utils.RemoteSubTitles;
 import com.github.mozvip.subtitles.model.VideoSource;
 import org.junit.Assert;
 import org.junit.BeforeClass;

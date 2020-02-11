@@ -7,8 +7,11 @@ import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-import com.github.mozvip.subtitles.*;
 import com.github.mozvip.subtitles.model.VideoSource;
+import com.github.mozvip.subtitles.utils.RemoteSubTitles;
+import com.github.mozvip.subtitles.utils.SubTitleEvaluator;
+import com.github.mozvip.subtitles.utils.SubTitlesZip;
+import com.github.mozvip.subtitles.utils.SubtitlesFinder;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -45,7 +48,7 @@ public class Podnapisi extends SubtitlesFinder implements EpisodeSubtitlesFinder
 
 	@Override
 	public RemoteSubTitles downloadEpisodeSubtitle(String showName, int season, int episode, String release, VideoSource source,
-			Locale locale) throws ExecutionException {
+												   Locale locale) throws ExecutionException {
 
 		String queryString = showName.toLowerCase();
 		if (StringUtils.contains(queryString, "(")) {

@@ -1,10 +1,13 @@
-package com.github.mozvip.subtitles;
+package com.github.mozvip.subtitles.utils;
 
 import com.github.mozvip.subtitles.model.MovieInfo;
 import com.github.mozvip.subtitles.model.TVShowEpisodeInfo;
 import com.github.mozvip.subtitles.model.VideoInfo;
 import com.github.mozvip.subtitles.model.VideoNameParser;
 import com.github.mozvip.subtitles.model.FileHasher;
+import com.github.mozvip.subtitles.providers.EpisodeSubtitlesFinder;
+import com.github.mozvip.subtitles.providers.FileHashSubtitlesFinder;
+import com.github.mozvip.subtitles.providers.MovieSubtitlesFinder;
 import com.github.mozvip.subtitles.srt.SRTFile;
 import org.reflections.Reflections;
 import org.slf4j.Logger;

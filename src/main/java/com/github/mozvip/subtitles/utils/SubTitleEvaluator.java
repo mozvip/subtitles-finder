@@ -1,4 +1,4 @@
-package com.github.mozvip.subtitles;
+package com.github.mozvip.subtitles.utils;
 
 import com.github.mozvip.subtitles.model.Release;
 import com.github.mozvip.subtitles.model.VideoSource;

@@ -1,5 +1,6 @@
 package com.github.mozvip.subtitles;
 
+import com.github.mozvip.subtitles.utils.RegExp;
 import org.junit.Assert;
 import org.junit.Test;
 
