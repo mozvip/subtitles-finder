@@ -8,28 +8,29 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.Callable;
 
-import com.beust.jcommander.JCommander;
-import com.beust.jcommander.Parameter;
 import com.github.mozvip.subtitles.cli.LocaleConverter;
 import com.github.mozvip.subtitles.cli.PathConverter;
 import com.github.mozvip.subtitles.utils.SubtitleDownloader;
 import com.github.mozvip.subtitles.utils.VideoFileFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import picocli.CommandLine;
 
-public class DownloadForFolder {
+@CommandLine.Command(name = "downloadForFolder", description = "Download subtitles for all videos in a folder.")
+public class DownloadForFolder implements Callable<Integer> {
 
-	@Parameter(names={"-o", "-overwrite"}, description="Overwrite existing subtitles")
+	@CommandLine.Option(names={"-o", "-overwrite"}, description="Overwrite existing subtitles")
 	private boolean overwrite = false;
 
-	@Parameter(names={"-f", "-folder"}, description = "Folder that contains videos", required=true, converter= PathConverter.class)
+	@CommandLine.Option(names={"-f", "-folder"}, description = "Folder that contains videos", required=true, converter= PathConverter.class)
 	private List<Path> folders;
 
-	@Parameter(names={"-l", "-lang"}, description = "Language for subtitles", required=true, converter=LocaleConverter.class)
+	@CommandLine.Option(names={"-l", "-lang"}, description = "Language for subtitles", required=true, converter=LocaleConverter.class)
 	private Locale locale;
 
-	@Parameter(names={"-i", "-ignore"}, description = "Ignore files whose name contain this pattern")
+	@CommandLine.Option(names={"-i", "-ignore"}, description = "Ignore files whose name contain this pattern")
 	private List<String> ignorePatterns;
 
 	private final static Logger LOGGER = LoggerFactory.getLogger( DownloadForFolder.class);
@@ -69,22 +70,14 @@ public class DownloadForFolder {
 		return results;
 	}
 
-	public static DownloadForFolder getInstanceFromCmdLine(String[] argv) {
-		DownloadForFolder instance = new DownloadForFolder();
-
-		JCommander.newBuilder()
-				.addObject(instance)
-				.build()
-				.parse(argv);
-
-		return instance;
-	}
-
 	public static void main(String[] argv) {
-		getInstanceFromCmdLine(argv).run();
+		int exitCode = new CommandLine(new DownloadForFolder()).execute(argv);
+		System.exit(exitCode);
 	}
 
-	public int run() {
+
+	@Override
+	public Integer call() throws Exception {
 		SubtitleDownloader downloader = new SubtitleDownloader();
 
 		for (Path folder: folders) {

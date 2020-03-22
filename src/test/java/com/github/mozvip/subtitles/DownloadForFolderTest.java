@@ -3,6 +3,7 @@ package com.github.mozvip.subtitles;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import picocli.CommandLine;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -32,8 +33,7 @@ public class DownloadForFolderTest {
 
     @Test
     public void testDownloadSubtitles() throws IOException {
-        final DownloadForFolder instance = DownloadForFolder.getInstanceFromCmdLine(new String[]{"-f", videoPath.toAbsolutePath().toString(), "-i", "VOSTFR", "-l", "fr", "-o"});
-        final int downloaded = instance.run();
+        int downloaded = new CommandLine(new DownloadForFolder()).execute(new String[]{"-f", videoPath.toAbsolutePath().toString(), "-i", "VOSTFR", "-l", "fr", "-o"});
         Assert.assertEquals(5, downloaded);
     }
 }
